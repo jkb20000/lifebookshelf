@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b99">
+<link rel="manifest" href="manifest.webmanifest?b100">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b99">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b99">
+<link rel="apple-touch-icon" href="icon-180.png?b100">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b100">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
 <script src="firebase-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -672,7 +673,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.2.3',APP_BUILD_NO=99,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.3.0',APP_BUILD_NO=100,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -893,7 +894,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.da
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','검색: ':'Searching: ',' 설정에서 켜고 끌 수 있어요.':' Change in Settings.','카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'Kakao Books and YES24 are available once you sign in.','카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.':'Kakao Books and YES24 are available in the web app when signed in.','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
 function vShelf(){
   const all=list(),fs=S.fset,rs=S.rset,sq=S.sq.trim().toLowerCase();
   const f=fs.size?(fs.size===1?[...fs][0]:'multi'):'all';
@@ -994,7 +995,8 @@ function timelineHTML(b){const ev=[];
 
 /* ---------- ops: migrations, error log, backup reminder, data deletion ---------- */
 const SCHEMA=2;
-function runMigrations(){const sc=(S.settings.categories||[]);if(sc.some(c=>SUMCATS[c])){S.settings.categories=sc.filter(c=>!SUMCATS[c]);putSettings()}
+function runMigrations(){if(S.settings.kakaoKey||S.settings.yes24Key){delete S.settings.kakaoKey;delete S.settings.yes24Key;putSettings()}
+const sc=(S.settings.categories||[]);if(sc.some(c=>SUMCATS[c])){S.settings.categories=sc.filter(c=>!SUMCATS[c]);putSettings()}
   Object.values(S.books).forEach(b=>{if((b.v||0)>=SCHEMA&&!CAT_RENAME[b.category]&&!SUMCATS[b.category])return;let ch=false;
   const n=CAT_RENAME[b.category];if(n){b.category=n;ch=true}
   if(SUMCATS[b.category]){b.isSummary=true;b.category='';ch=true}
@@ -1154,8 +1156,8 @@ function vSettings(){return `<header class="top"><div><h1>설정</h1></div></hea
   ${storageHTML()}
   ${dangerHTML()}
   <div class="sec" id="sec-search"><h2>책 검색</h2>
-    ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${KEYED[k]&&!apiKey(k)?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>${KEYED[k]?keyHTML(k):''}`).join('')}
-    <p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
+    ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${PROXIED[k]&&!proxyOn()?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>`).join('')}
+    ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?'카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
   <div class="sec"><h2>저장 위치</h2><p style="margin:0;font-size:14px">${S.syncMsg||''}</p></div>
   <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p></div>`}
 let lastMain='';
@@ -1307,24 +1309,20 @@ function aiFail(e){if(!e||e.code==='cancelled')return;
 async function fetchJSON(url,ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||8000);try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error('http '+r.status);return await r.json()}finally{clearTimeout(t)}}
 const httpsify=u=>String(u||'').replace(/^http:\/\//,'https://').replace('&edge=curl','');
 /* Kakao (Daum) book search: best coverage of books sold in Korea. REST key restricted to this app */
-/* API keys (Kakao, YES24) are entered in Settings and kept in the user's own settings, never in this file */
-const KEYED={kakao:'kakaoKey',yes24:'yes24Key'};
-const apiKey=k=>String(S.settings[KEYED[k]]||'').trim();const y24Key=()=>apiKey('yes24');
+/* Kakao and YES24 go through the bookApi Firebase function: the API keys live only in Firebase Secret Manager.
+   Only signed-in users of the web app can call it. */
+const PROXIED={kakao:1,yes24:1};
+const proxyOn=()=>typeof FB!=='undefined'&&!!FB&&!!(S.user&&S.user.uid)&&!!(window.firebase&&firebase.functions);
+async function bookApi(src,q,isIsbn){if(!proxyOn())return null;const fn=firebase.app().functions('asia-northeast3').httpsCallable('bookApi',{timeout:12000});const r=await fn({src,q,isbn:!!isIsbn});return r.data||{}}
 /* YES24 Open API: detail=Y gives page count in the search response */
-async function searchYes24(q){const key=y24Key();if(!key)return [];const c=new AbortController();const t=setTimeout(()=>c.abort(),8000);
-  try{const r=await fetch('https://apis.yes24.com/v1/goods/itemList?pageSize=10&detail=Y&sort=RELATION&query='+encodeURIComponent(q),{headers:{'X-Api-Key':key},signal:c.signal});
-    if(r.status===404)return [];if(!r.ok)throw new Error('http '+r.status);const j=await r.json();
-    return ((j.data||{}).items||[]).filter(d=>!d.goodsType||/도서|book/i.test(d.goodsType)).map(d=>{const isbn=[d.isbn13,d.isbn10].map(x=>cleanIsbn(String(x||''))).find(x=>x&&isbnOk(x))||'';
+async function searchYes24(q){const j=await bookApi('yes24',q);if(!j)return [];
+    return (j.items||[]).filter(d=>!d.goodsType||/도서|book/i.test(d.goodsType)).map(d=>{const isbn=[d.isbn13,d.isbn10].map(x=>cleanIsbn(String(x||''))).find(x=>x&&isbnOk(x))||'';
       return {title:d.title||'',author:String(d.author||'').replace(/\s*(저|공저|글|지음)\s*$/,''),translator:'',publisher:d.publisher||'',year:String(d.publishDate||'').slice(0,4),pages:+d.pages||0,isbn,
         cover:httpsify(d.cover||''),source:'예스24',link:httpsify(d.link||'')}}).filter(r=>r.title)}
-  finally{clearTimeout(t)}}
-async function searchKakao(q,isIsbn){const key=apiKey('kakao');if(!key)return [];const c=new AbortController();const t=setTimeout(()=>c.abort(),8000);
-  try{const r=await fetch('https://dapi.kakao.com/v3/search/book?size=10&query='+encodeURIComponent(q)+(isIsbn?'&target=isbn':''),{headers:{Authorization:'KakaoAK '+key},signal:c.signal});
-    if(!r.ok)throw new Error('http '+r.status);const j=await r.json();
+async function searchKakao(q,isIsbn){const j=await bookApi('kakao',q,isIsbn);if(!j)return [];
     return (j.documents||[]).map(d=>{const ids=String(d.isbn||'').split(/\s+/).filter(Boolean);const isbn=ids.find(x=>x.length===13&&isbnOk(x))||ids.find(x=>isbnOk(x))||'';
       return {title:d.title||'',author:(d.authors||[]).join(', '),translator:(d.translators||[]).join(', '),publisher:d.publisher||'',year:(d.datetime||'').slice(0,4),pages:0,isbn,
         cover:httpsify(d.thumbnail||'')||(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`:''),source:'카카오 책',link:httpsify(d.url||'')}}).filter(r=>r.title)}
-  finally{clearTimeout(t)}}
 async function searchGoogle(q,lang){const j=await fetchJSON('https://www.googleapis.com/books/v1/volumes?q='+encodeURIComponent(q)+'&maxResults=10&printType=books'+(lang?'&langRestrict='+lang:''));
   return (j.items||[]).map(it=>{const v=it.volumeInfo||{};const ids=v.industryIdentifiers||[];const i13=(ids.find(x=>x.type==='ISBN_13')||{}).identifier||'';const i10=(ids.find(x=>x.type==='ISBN_10')||{}).identifier||'';
     const isbn=isbnOk(i13)?i13:(isbnOk(i10)?i10:'');const il=v.imageLinks||{};
@@ -1342,7 +1340,7 @@ ${lang()==='en'?'제목과 저자는 영어로 쓰세요.':'한국어 번역서�
   return (Array.isArray(j)?j:[]).filter(r=>r&&r.title).slice(0,5).map(r=>({title:r.title,author:r.author||'',publisher:r.publisher||'',year:r.year?String(r.year):'',pages:+r.pages||0,isbn:'',cover:'',source:'Claude 지식',link:''}))}
 const SEARCH_SRC={kakao:'카카오 책',yes24:'예스24',naver:'네이버 책',openlib:'Open Library',google:'Google Books'};
 /* three engines, each switchable in Settings (all on by default); Naver Books is only a link */
-const srcOn=k=>!(S.settings.srcOff||[]).includes(k)&&(!KEYED[k]||!!apiKey(k));
+const srcOn=k=>!(S.settings.srcOff||[]).includes(k)&&(!PROXIED[k]||proxyOn());
 const naverUrl=q=>'https://search.shopping.naver.com/book/search?query='+encodeURIComponent(q);
 /* Kakao gives no page count: look the ISBN up in Google Books, then Open Library */
 async function fillPages(f,isbn){f.pagesBusy=true;renderForm();let n=0;
@@ -1362,18 +1360,13 @@ async function bookSearch(){const f=S.form;if(!f)return;const q=(f.q||'').trim()
   if(!res.length&&sample){try{res=await claudeSearch(q)}catch(e){aiFail(e)}}
   if(S.form!==f)return;f.results=res.slice(0,14);f.searchedQ=q;f.searching=false;renderForm()}
 /* search stores by title + first author: the ISBN from Google Books/Open Library is often an edition the store does not carry */
-const KEYINFO={kakao:['카카오 REST API 키 붙여넣기','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.'],yes24:['예스24 API 키 붙여넣기','예스24 개발자센터에서 받은 키를 넣으면 켜져요.']};
-function keyHTML(src){const k=apiKey(src),[ph,hint]=KEYINFO[src];
-  if(k&&S.keyEdit!==src)return `<div class="keyrow"><span class="keyok">API 키 저장됨 <code>••••${esc(k.slice(-4))}</code></span><button class="btn small ghost" data-action="keyedit" data-k="${src}">바꾸기</button><button class="btn small ghost" data-action="keyclear" data-k="${src}">지우기</button></div>`;
-  return `<div class="keyrow"><input id="key-${src}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}" value=""><button class="btn small" data-action="keysave" data-k="${src}">저장</button>${k?`<button class="btn small ghost" data-action="keycancel">취소</button>`:''}</div>
-  <p class="hint" style="margin:2px 0 8px 34px">${hint} 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.</p>`}
 function storeLinks(r){const au=String(r.author||'').split(/[,;·]| and | & /)[0].trim();const q=encodeURIComponent([String(r.title||'').split(/[:(]/)[0].trim(),au].filter(Boolean).join(' '));
   return `${srcOn('naver')?`<a href="https://search.shopping.naver.com/book/search?query=${q}" target="_blank" rel="noopener">네이버 책</a>`:''}${srcOn('yes24')?`<a href="https://www.yes24.com/product/search?query=${q}" target="_blank" rel="noopener">예스24</a>`:''}<a href="https://www.aladin.co.kr/search/wsearchresult.aspx?SearchWord=${q}" target="_blank" rel="noopener">알라딘</a><a href="https://www.amazon.com/s?k=${q}&i=stripbooks" target="_blank" rel="noopener">Amazon</a>`}
 function searchPanelHTML(f){const rs=f.results;
   /* Naver Books has no API: always the last result row, opening Naver's own search */
   const nv=srcOn('naver')&&f.searchedQ&&!f.searching?`<a class="srow2 nvrow" href="${naverUrl(f.searchedQ)}" target="_blank" rel="noopener"><span class="sthumb nv">N</span><div class="sbody"><span class="stitle nvt"><b>${esc(f.searchedQ)}</b><span>네이버 책에서 검색 결과 보기</span></span><div class="srcrow"><em>네이버 책 ↗</em><em class="lk">링크</em></div></div></a>`:'';
   return `<div class="field"><div class="hbtns" style="flex-wrap:nowrap"><input type="search" id="f-q" data-ff="q" value="${esc(f.q)}" placeholder="제목, 저자, ISBN으로 검색" autocomplete="off" enterkeyhint="search" style="flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px"><button class="btn small" data-action="fsearch" ${f.searching?'disabled':''}>${f.searching?'찾는 중':'검색'}</button>${sampleImages?`<button class="btn act" data-action="fisbn" aria-label="바코드 사진" ${f.isbnBusy?'disabled':''}><svg viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M10 6v12M14 6v12M17 6v12M20 6v12"/></svg></button>`:''}</div>
-    <p class="hint" style="margin:6px 2px 0">${['kakao','yes24','google'].filter(srcOn).map(k=>SEARCH_SRC[k]).join(' + ')||'검색 엔진 없음'}에서 찾아요.${srcOn('naver')?' 네이버 책은 링크로 열려요.':''} 설정에서 켜고 끌 수 있어요.</p></div>
+    <p class="hint" style="margin:6px 2px 0">검색: ${['kakao','yes24','google'].filter(srcOn).map(k=>SEARCH_SRC[k]).join(' + ')||'검색 엔진 없음'}.${srcOn('naver')?' 네이버 책은 링크로 열려요.':''} 설정에서 켜고 끌 수 있어요.</p></div>
   ${f.searching?'<p class="hint" style="text-align:center;padding:14px 0">찾는 중...</p>':''}
   ${rs?`${rs.length||nv?`<div class="sres">${rs.map((r,i)=>`<div class="srow2"><button class="sthumb" data-action="fpick" data-i="${i}" style="--c:${COLORS[hash(r.title)%COLORS.length]}" aria-label="${esc(r.title)} 선택"><span>${esc(r.title)}</span>${r.cover?`<img src="${esc(r.cover)}" alt="" loading="lazy" onerror="this.remove()">`:''}</button>
       <div class="sbody"><button class="stitle" data-action="fpick" data-i="${i}"><b>${esc(r.title)}</b><span>${esc([r.author,r.publisher,r.year].filter(Boolean).join(', '))}${r.pages?esc(', ')+trText(r.pages+'쪽'):''}</span>${r.isbn?`<span class="sisbn">ISBN ${esc(r.isbn)}</span>`:''}</button>
@@ -1455,10 +1448,6 @@ document.addEventListener('click',e=>{
     case 'dnav':{const v=t.dataset.v,a=t.dataset.a;closeDrawer();if(v==='import'){openImport();break}if(S.openId)closeBook();if(S.view!=='settings'&&v==='settings'){S.prevView=S.view;S.prevScroll=window.scrollY;try{history.pushState({mbsView:'settings'},'')}catch(e){}}S.view=v;renderMain();
       const ry=v!=='settings'?(S.prevScroll||0):0;if(v!=='settings'){S.prevView=null;S.prevScroll=0;if(history.state&&history.state.mbsView){try{history.replaceState(null,'')}catch(e){}}}
       setTimeout(()=>{const el=a&&document.getElementById(a);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo(0,ry)},60);break}
-    case 'keysave':{const k=t.dataset.k,v=($('#key-'+k)||{}).value||'';if(!v.trim()){toast('키를 붙여 넣어 주세요');break}S.settings[KEYED[k]]=v.trim();const off=new Set(S.settings.srcOff||[]);off.delete(k);S.settings.srcOff=[...off];S.keyEdit=null;putSettings();renderMain();toast(trText(SEARCH_SRC[k])+trText(' 키를 저장했어요'));break}
-    case 'keyedit':S.keyEdit=t.dataset.k;renderMain();setTimeout(()=>$('#key-'+t.dataset.k)?.focus(),30);break;
-    case 'keycancel':S.keyEdit=null;renderMain();break;
-    case 'keyclear':{const k=t.dataset.k;delete S.settings[KEYED[k]];S.keyEdit=null;putSettings();renderMain();toast(trText(SEARCH_SRC[k])+trText(' 키를 지웠어요'));break}
     case 'srctoggle':{const k=t.dataset.k;{const off=new Set(S.settings.srcOff||[]);t.checked?off.delete(k):off.add(k);S.settings.srcOff=[...off]}putSettings();setTimeout(renderMain,0);break}
     case 'skin':S.settings.skin=t.dataset.k;applySkin();putSettings();renderMain();break;
     case 'year':S.year=+t.dataset.y;renderMain();break;
