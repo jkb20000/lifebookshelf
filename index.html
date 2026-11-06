@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b101">
+<link rel="manifest" href="manifest.webmanifest?b103">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b101">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b101">
+<link rel="apple-touch-icon" href="icon-180.png?b103">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b103">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -272,7 +272,7 @@ button{cursor:pointer;-webkit-appearance:none;appearance:none;white-space:normal
 .wood{margin:0 12px;background:var(--shelf-bg,linear-gradient(180deg,var(--surface-2),var(--surface)));border-radius:6px;overflow:hidden;border:1px solid var(--line)}
 .wood{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .wood::-webkit-scrollbar{display:none}
-.srow{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:end;padding:18px 16px 0;border-bottom:9px solid var(--plank);box-shadow:inset 0 -2px 0 var(--plank-edge);position:relative}
+.srow{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:repeat(var(--per,3),1fr);gap:16px;align-items:end;padding:18px 16px 0;border-bottom:9px solid var(--plank);box-shadow:inset 0 -2px 0 var(--plank-edge);position:relative}
 .srow::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:3px;background:var(--plank-edge);opacity:.6}
 .tile{background:none;border:0;padding:0;display:block;width:100%;transition:transform .15s}
 .tile:hover{transform:translateY(-3px)}
@@ -361,6 +361,9 @@ button{cursor:pointer;-webkit-appearance:none;appearance:none;white-space:normal
 .sheet{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;overflow-x:hidden;transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .sheet.open{transform:none}
+.pvsheet{z-index:30}.pvbar{position:sticky;top:0;background:var(--bg);padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;z-index:1}
+.pvdoc{padding:0 20px 24px;font-size:14px;line-height:1.7;color:var(--ink)}.pvdoc h1{font-size:22px;margin:4px 0 2px}.pvdoc b{font-family:inherit;font-size:inherit;display:inline}.pvdoc .pvdate{color:var(--muted);font-size:12px;margin:0 0 14px}
+.pvdoc h3{font-size:15px;margin:20px 0 6px}.pvdoc ul{margin:4px 0;padding-left:18px}.pvdoc li{margin:2px 0}.pvdoc p{margin:6px 0}.pvdoc a{color:var(--accent)}
 .sheet .in{max-width:480px;margin:0 auto;padding-bottom:40px}
 .sbar{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg)}
 .cover{margin:6px 20px 18px;background:var(--c);color:#F6F3EC;border-radius:4px 10px 10px 4px;padding:26px 22px 22px 30px;position:relative;min-height:170px;display:flex;flex-direction:column;justify-content:flex-end;
@@ -647,6 +650,41 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 .dedit label{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
 .dedit input[type=date]{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:8px;padding:4px 8px;font-size:13px;font-family:var(--sans)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}.drawer{transition:transform .2s ease,visibility 0s linear .2s!important}.drawer.open{transition:transform .2s ease,visibility 0s!important}.dback{transition:opacity .2s!important}}
+
+/* ---------- responsive: folded phones, phones, foldables and tablets, laptops, large monitors ---------- */
+@media (max-width:360px){
+  .ccard .a{flex-wrap:wrap;white-space:normal}.ccard .a .au{white-space:nowrap}
+  .appbar .abrand b{font-size:22px}
+}
+@media (min-width:700px){
+  .app,.tabs .in{max-width:760px}
+  .sheet .in,.imp .in{max-width:720px}
+  .ccard{flex:0 0 calc(50% - 5px)!important}
+  .modal{align-items:center;padding:24px}
+  .mbox{max-width:620px;border-radius:18px;max-height:88vh;padding-bottom:20px}
+  #view[data-view=settings],#view[data-view=goal]{columns:2;column-gap:0}
+  #view[data-view=settings]>*,#view[data-view=goal]>*{break-inside:avoid}
+  #view[data-view=settings]>header,#view[data-view=goal]>header,#view[data-view=goal]>.chips{column-span:all}
+}
+@media (min-width:1024px){
+  .app{max-width:1080px;padding-bottom:104px}
+  .ccard{flex:0 0 calc(33.333% - 7px)!important}
+  .tabs{left:50%;right:auto;bottom:14px;width:440px;transform:translateX(-50%);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.16);padding-bottom:4px}
+  .tabs .in{max-width:none}
+  .toast{bottom:96px}
+  #view[data-view=quotes]{max-width:860px;margin:0 auto}
+}
+@media (min-width:1400px){
+  .app{max-width:1240px}
+  .ccard{flex:0 0 calc(25% - 7.5px)!important}
+  #view[data-view=settings],#view[data-view=goal]{columns:3}
+}
+.sec a[href^=mailto]{color:var(--accent)}
+@media (hover:hover) and (pointer:fine){
+  .tile .cv,.titem .tcv{transition:transform .15s ease}
+  .tile:hover .cv,.titem:hover .tcv{transform:translateY(-3px)}
+  .ccard:hover,.rcard:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+}
 </style>
 </head>
 <body>
@@ -663,6 +701,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
   <button data-action="tab" data-tab="goal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></svg>목표</button>
 </div></nav>
 <section class="sheet" id="sheet" aria-hidden="true"><div class="in" id="sheetIn"></div></section>
+<section class="sheet pvsheet" id="pvsheet" aria-hidden="true"><div class="in" id="pvIn"></div></section>
 <div class="modal" id="modal" hidden><div class="mbox" id="mbox" role="dialog" aria-modal="true"></div></div>
 <input type="file" id="photo" accept="image/*" hidden>
 <input type="file" id="coverfile" accept="image/*" hidden>
@@ -674,7 +713,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.4.0',APP_BUILD_NO=101,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.6.0',APP_BUILD_NO=103,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -801,7 +840,7 @@ const gCondHTML=()=>`<div class="note-box gcond"><b>Google 로그인 사용 조�
 function loginFormHTML(){const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
   return `<div class="lgf"><input type="email" id="lg-email" placeholder="이메일" autocomplete="username" inputmode="email"><input type="password" id="lg-pw" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
     <div class="hbtns"><button class="btn small" data-action="emaillogin">${S.signup?'가입하고 로그인':'이메일로 로그인'}</button>${standalone?'':'<button class="btn ghost small" data-action="login">Google로 로그인</button>'}</div>
-    <p class="hint">처음 가입한 방법으로 로그인하세요. 이메일 가입은 쓰고 싶은 이메일과 비밀번호를 넣고 로그인하면 바로 돼요.</p>${gCondHTML()}</div>`}
+    <p class="hint">처음 가입한 방법으로 로그인하세요. 이메일 가입은 쓰고 싶은 이메일과 비밀번호를 넣고 로그인하면 바로 돼요.</p><p class="hint">가입 전에 <button class="linkbtn" data-action="privacy">개인정보 처리방침</button>을 확인해 주세요.</p>${gCondHTML()}</div>`}
 function accountHTML(){if(typeof FB==='undefined'||!FB)return'';const u=S.user;
   if(!u)return `<div class="sec" id="sec-account"><h2>계정</h2>${loginFormHTML()}</div>`;
   const m=[u.hasG?'Google':'',u.hasPw?'이메일':''].filter(Boolean);
@@ -882,10 +921,12 @@ function trayHTML(key,name,books){books=[...books].sort((a,b)=>(isNew(b)-isNew(a
 function tileHTML(b,mixed){const p=pct(b),nw=S._recentSec&&isNew(b),nb=!S._recentSec&&isNew(b);
   return `<button class="tile${nw?' inrecent':''}${nb?' isnew':''}${mixed&&b.status==='want'?' wish':''}${S.selMode&&S.sel.has(b.id)?' sel':''}" data-action="${S.selMode?'seltile':'open'}" data-id="${b.id}" aria-label="${esc(b.title)}, ${STATUS[b.status]}${b.rating?', 평점 '+b.rating:''}">
     <div class="cv">${coverHTML(b)}${nw?`<span class="band">${destOf(b)}</span>`:''}${nb||b.format||b.lent||b.borrowed?`<span class="tlb">${nb?'<span class="newb">NEW</span>':''}${b.format?`<span class="fm">${FORMAT[b.format]}</span>`:''}${b.lent?loanBadge(b,'lent'):''}${b.borrowed?loanBadge(b,'borrowed'):''}</span>`:''}${b.status==='reading'?'<i class="rib"></i>':''}${b.status==='reading'&&b.pages?`<i class="pg"><b style="width:${p}%"></b></i>`:''}${b.rating?`<span class="rt">${starsInline(b.rating)}</span>`:(b.status==='done'?`<span class="rt unr" title="평점 없음">${starsInline(0)}</span>`:'')}${b.readCount>1?`<span class="rc">↻${b.readCount}</span>`:''}</div></button>`}
-function sectionHTML(key,name,books,mixed,pre){if(pre)return trayHTML(key,name,books);S._recentSec=key==='__recent';const pages=[];for(let i=0;i<books.length;i+=3)pages.push(books.slice(i,i+3));
+/* books per shelf row: 3 on phones, more on tablets and computers */
+const shelfPer=()=>innerWidth>=1400?8:innerWidth>=1024?7:innerWidth>=700?5:3;
+function sectionHTML(key,name,books,mixed,pre){if(pre)return trayHTML(key,name,books);S._recentSec=key==='__recent';const per=shelfPer(),pages=[];for(let i=0;i<books.length;i+=per)pages.push(books.slice(i,i+per));
   const dots=pages.length<=1?'':`<div class="dots"><div class="dwrap"><div class="dtrack">${pages.map((_,i)=>`<button class="dot${i===0?' on':''}${i>14?' far':''}" data-action="dot" data-i="${i}" aria-label="${i+1}/${pages.length}"></button>`).join('')}</div></div>${pages.length>16?`<span class="dn"><b>1</b>/${pages.length}</span>`:''}</div>`;
   return `<section class="cat${pre?' pre':''}"><div class="cath"><h2>${esc(name)}</h2><span>${books.length}권</span>${pre?'<em>서재 입고 전</em>':''}</div>
-    <div class="wood" data-pages="${pages.length}">${pages.map(r=>`<div class="srow">${r.map(b=>tileHTML(b,mixed)).join('')}</div>`).join('')}</div>${dots}</section>`}
+    <div class="wood" data-pages="${pages.length}" style="--per:${per}">${pages.map(r=>`<div class="srow">${r.map(b=>tileHTML(b,mixed)).join('')}</div>`).join('')}</div>${dots}</section>`}
 const isNew=b=>!b.source&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
 const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||(b.createdAt||0)-(a.createdAt||0);
 function groupByCat(books){const m=new Map();books.forEach(b=>{const c=(b.category||'').trim()||'미분류';if(!m.has(c))m.set(c,[]);m.get(c).push(b)});
@@ -895,7 +936,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.da
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','카카오':'Kakao','네이버':'Naver','책 유형':'Format','분류':'Category','소장':'Owned','검색: ':'Searching: ',' 설정에서 켜고 끌 수 있어요.':' Change in Settings.','카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'Kakao Books and YES24 are available once you sign in.','카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.':'Kakao Books and YES24 are available in the web app when signed in.','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','연락처 ':'Contact ','오늘 카카오와 예스24 검색 한도를 다 썼어요. 내일 다시 쓸 수 있어요':'Today\'s Kakao and YES24 search limit is used up. It resets tomorrow','개인정보 처리방침':'Privacy Policy','가입 전에 ':'Before signing up, please read the ','을 확인해 주세요.':'.','카카오':'Kakao','네이버':'Naver','책 유형':'Format','분류':'Category','소장':'Owned','검색: ':'Searching: ',' 설정에서 켜고 끌 수 있어요.':' Change in Settings.','카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'Kakao Books and YES24 are available once you sign in.','카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.':'Kakao Books and YES24 are available in the web app when signed in.','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
 function vShelf(){
   const all=list(),fs=S.fset,rs=S.rset,sq=S.sq.trim().toLowerCase();
   const f=fs.size?(fs.size===1?[...fs][0]:'multi'):'all';
@@ -1165,7 +1206,7 @@ function vSettings(){return `<header class="top"><div><h1>설정</h1></div></hea
     ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${PROXIED[k]&&!proxyOn()?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>`).join('')}
     ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?'카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
   <div class="sec"><h2>저장 위치</h2><p style="margin:0;font-size:14px">${S.syncMsg||''}</p></div>
-  <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p></div>`}
+  <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p><p style="margin:4px 0 0;font-size:14px">연락처 <a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a></p><p style="margin:8px 0 0"><button class="linkbtn" data-action="privacy">개인정보 처리방침</button></p></div>`}
 let lastMain='';
 /* ---------- app bar & drawer ---------- */
 const IC={menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',back:'<path d="M15 5l-7 7 7 7"/>',shelf:'<path d="M4 4v16M8 6v14M12 4v16M16.5 5.5l3.5 14"/><path d="M2 20.5h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
@@ -1196,10 +1237,11 @@ function drawerHTML(){const fb=typeof FB!=='undefined'&&FB;
   <div class="dfoot">${esc(trText(S.syncMsg||''))}<span class="dver">MyBookShelf ${APP_VERSION} (빌드 ${APP_BUILD_NO}) · ${APP_BUILD}<br>개발자 ${APP_DEV}</span></div>`}
 function openDrawer(){const d=$('#drawer');d.innerHTML=tr(drawerHTML());d.classList.add('open');d.setAttribute('aria-hidden','false');$('#dback').classList.add('open');S.drawer=true}
 function closeDrawer(){$('#drawer').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');$('#dback').classList.remove('open');S.drawer=false}
-function renderMain(){
+let lastPer=0;window.addEventListener('resize',()=>{const n=shelfPer();if(lastPer&&n!==lastPer&&S.view==='shelf'){lastMain='';renderMain()}lastPer=n});
+function renderMain(){lastPer=shelfPer();
   const v=$('#view');
   const html=tr(S.view==='shelf'?vShelf():S.view==='quotes'?vQuotes():S.view==='goal'?vGoal():vSettings());
-  if(html!==lastMain){lastMain=html;const cx={};v.querySelectorAll('.chips[aria-label]').forEach(c=>cx[c.getAttribute('aria-label')]=c.scrollLeft);v.innerHTML=html;v.querySelectorAll('.chips[aria-label]').forEach(c=>{const x=cx[c.getAttribute('aria-label')];if(x)c.scrollLeft=x});const q=v.querySelector('.qotd blockquote'),qm=v.querySelector('.qotd .qmore');if(q&&qm&&(S.qexp||q.scrollHeight>q.clientHeight+4))qm.style.display='block'}
+  v.dataset.view=S.view;if(html!==lastMain){lastMain=html;const cx={};v.querySelectorAll('.chips[aria-label]').forEach(c=>cx[c.getAttribute('aria-label')]=c.scrollLeft);v.innerHTML=html;v.querySelectorAll('.chips[aria-label]').forEach(c=>{const x=cx[c.getAttribute('aria-label')];if(x)c.scrollLeft=x});const q=v.querySelector('.qotd blockquote'),qm=v.querySelector('.qotd .qmore');if(q&&qm&&(S.qexp||q.scrollHeight>q.clientHeight+4))qm.style.display='block'}
   $('#appbar').innerHTML=tr(appbarHTML());
   const TABS={shelf:'서재',quotes:'문구',goal:'목표'};
   document.querySelectorAll('.tabs button').forEach(b=>{b.setAttribute('aria-current',b.dataset.tab===S.view?'page':'false');b.lastChild.textContent=trText(TABS[b.dataset.tab]);b.setAttribute('aria-label',trText(TABS[b.dataset.tab]));b.title=trText(TABS[b.dataset.tab])});
@@ -1357,7 +1399,7 @@ async function fillPages(f,isbn){f.pagesBusy=true;renderForm();let n=0;
 async function bookSearch(){const f=S.form;if(!f)return;const q=(f.q||'').trim();if(!q||f.searching)return;f.searching=true;f.results=null;renderForm();
   const isb=cleanIsbn(q);const isIsbn=/^[\d\-\sXx]+$/.test(q)&&(isb.length===13||isb.length===10)&&isbnOk(isb);let res=[];
   const ko=!isIsbn&&/[가-힣]/.test(q);
-  const go=(k,fn)=>srcOn(k)?fn().catch(e=>{logError('search-'+k,e.message);return []}):Promise.resolve([]);
+  const go=(k,fn)=>srcOn(k)?fn().catch(e=>{logError('search-'+k,e.message);if(e&&e.code==='functions/resource-exhausted'&&!S.quotaToast){S.quotaToast=1;toast(trText('오늘 카카오와 예스24 검색 한도를 다 썼어요. 내일 다시 쓸 수 있어요'))}return []}):Promise.resolve([]);
   const [kk,yy,gg]=await Promise.all([go('kakao',()=>searchKakao(isIsbn?isb:q,isIsbn)),go('yes24',()=>searchYes24(isIsbn?isb:q)),go('google',()=>searchGoogle(isIsbn?'isbn:'+isb:q,ko?'ko':''))]);
   /* Korean or ISBN query: Kakao 8, YES24 6, Google 4; English query: Google 8, YES24 4, Kakao 4; then the rest. Duplicates fill each other's missing pages */
   const isK=r=>/[가-힣]/.test(r.title+r.author);const hk=l=>ko?[...l.filter(isK),...l.filter(r=>!isK(r))]:l;
@@ -1367,6 +1409,48 @@ async function bookSearch(){const f=S.form;if(!f)return;const q=(f.q||'').trim()
   if(S.form!==f)return;f.results=res.slice(0,14);f.searchedQ=q;f.searching=false;renderForm()}
 /* search stores by title + first author: the ISBN from Google Books/Open Library is often an edition the store does not carry */
 const SHORT_SRC={'카카오 책':'카카오','네이버 책':'네이버','Google Books':'Google'};const shortSrc=s=>SHORT_SRC[s]||s;
+/* ---------- privacy policy (Korean / English), structured after the PIPC standard items ---------- */
+const PRIVACY_DATE='2026-11-06',APP_CONTACT='jkb20000@gmail.com';
+function privacyHTML(){const en=lang()==='en',mail=APP_CONTACT?`<a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a>`:(en?'(email to be added)':'(이메일 등록 예정)');
+  const H=(t)=>`<h3>${t}</h3>`,L=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  const remedy=[['개인정보침해신고센터','Personal Information Infringement Report Center (KISA)','privacy.kisa.or.kr','118'],['개인정보분쟁조정위원회','Personal Information Dispute Mediation Committee','www.kopico.go.kr','1833-6972'],['대검찰청','Supreme Prosecutors\' Office','www.spo.go.kr','1301'],['경찰청','Korean National Police Agency','ecrm.police.go.kr','182']];
+  if(!en)return `<h1>개인정보 처리방침</h1><p class="pvdate">시행일 ${PRIVACY_DATE.replace(/-/g,'. ')}.</p>
+<p>MyBookShelf(이하 '앱')는 「개인정보 보호법」 제30조에 따라 이용자의 개인정보를 보호하고 관련 고충을 원활하게 처리하기 위해 다음과 같이 개인정보 처리방침을 정합니다.</p>
+${H('1. 개인정보의 처리 목적')}${L(['회원 가입과 로그인(본인 확인)','독서 기록의 저장과 여러 기기 간 동기화','오류 확인과 서비스 개선'])}<p>위 목적 외에 광고, 마케팅, 이용자 분석 목적으로 이용하지 않습니다.</p>
+${H('2. 처리하는 개인정보 항목')}${L(['<b>계정 정보:</b> 이메일 주소, 비밀번호(암호화되어 저장되며 앱 운영자도 볼 수 없음). Google로 로그인하면 이름, 이메일 주소, Google 계정 식별자','<b>이용자가 직접 입력한 정보:</b> 책 정보, 독서 상태와 날짜, 읽은 쪽수, 평점, 메모와 문구, 직접 올린 표지와 문구 사진, 대여 기록(빌려준 사람이나 빌린 곳 등 직접 적은 내용), 앱 설정','<b>자동으로 생성되는 정보:</b> 오류 기록(오류 내용, 브라우저 종류, 발생 화면), 로그인 기록(접속 IP 등, Firebase가 보안 목적으로 처리), 책 검색 사용 횟수(날짜와 횟수만, 하루 사용 한도 확인용)'])}<p>대여 기록에 다른 사람의 이름을 적을 때에는 구분에 필요한 정도로만 적어 주세요.</p>
+${H('3. 보유 및 이용 기간')}<p>회원 탈퇴 시까지 보유합니다. 설정 > 데이터 삭제 > 계정과 모든 데이터 삭제로 탈퇴하면 지체 없이 파기합니다. 법령에 따라 별도로 보존하는 정보는 없습니다.</p>
+${H('4. 제3자 제공')}<p>이용자의 개인정보를 제3자에게 제공하지 않습니다. 다만 법령에 특별한 규정이 있는 경우는 예외로 합니다.</p>
+${H('5. 처리 위탁')}${L(['<b>수탁자:</b> Google LLC','<b>위탁 업무:</b> 계정 인증(Firebase Authentication), 데이터 저장(Cloud Firestore, Cloud Storage), 서버 기능 운영(Cloud Functions)'])}
+${H('6. 개인정보의 국외 이전')}<p>「개인정보 보호법」 제28조의8에 따라 다음과 같이 개인정보를 국외로 이전합니다.</p>${L(['<b>이전받는 자:</b> Google LLC (개인정보 문의: support.google.com/policies)','<b>이전 국가:</b> 미국 등 Google이 데이터센터를 운영하는 국가','<b>이전 시기와 방법:</b> 서비스 이용 시 네트워크를 통해 수시로 전송','<b>이전 항목:</b> 2번의 항목','<b>이전 목적과 보유 기간:</b> 5번의 위탁 업무, 3번의 기간과 같음','<b>거부 방법과 효과:</b> 로그인하지 않고 사용하면 기록이 이용자 기기에만 저장되어 국외 이전이 일어나지 않습니다. 이 경우 여러 기기 동기화는 이용할 수 없습니다.'])}
+${H('7. 책 검색 시 외부 서비스')}<p>책을 검색하면 검색어(제목, 저자, ISBN)가 카카오, 예스24(앱 서버를 거쳐 전송), Google Books로 전송되고, 쪽수를 찾을 때 Open Library가 쓰일 수 있습니다. 이때 이용자의 계정 정보는 함께 보내지 않습니다. 다만 Google Books와 Open Library는 브라우저에서 직접 연결하므로 접속 IP 주소가 해당 사업자에게 전달될 수 있습니다. 서점 링크(네이버 책, 예스24, 알라딘, Amazon)를 누르면 해당 사이트로 이동하며, 그 이후에는 해당 사이트의 개인정보 처리방침이 적용됩니다.</p>
+${H('8. 개인정보의 파기')}<p>탈퇴하면 서버에 저장된 계정, 독서 기록, 사진, 검색 사용 횟수를 지체 없이 삭제하며 복구할 수 없습니다. 이용자가 내려받은 백업 파일은 이용자가 직접 관리합니다.</p>
+${H('9. 이용자의 권리와 행사 방법')}${L(['<b>열람과 정정:</b> 앱 화면에서 언제든 확인하고 수정할 수 있습니다.','<b>삭제:</b> 책별 삭제 또는 설정 > 데이터 삭제','<b>처리 정지:</b> 로그아웃 또는 탈퇴','<b>내보내기:</b> 설정 > 데이터 내보내기(JSON 파일)'])}<p>앱에서 직접 하기 어려운 요청은 13번의 보호책임자에게 연락하면 지체 없이 처리합니다.</p>
+${H('10. 안전성 확보 조치')}${L(['전송 구간 암호화(HTTPS)','비밀번호 암호화 저장(Firebase Authentication)','본인만 자신의 데이터에 접근하도록 하는 보안 규칙 적용','외부 서비스 API 키의 서버 보관','운영자의 데이터 접근 최소화'])}
+${H('11. 자동 수집 장치')}<p>쿠키나 광고, 분석 도구를 사용하지 않습니다. 앱이 동작하고 로그인 상태를 유지하기 위해 브라우저 저장소(localStorage, IndexedDB)에 기록과 설정을 저장하며, 브라우저 설정에서 사이트 데이터를 삭제하면 지울 수 있습니다.</p>
+${H('12. 만 14세 미만 아동')}<p>이 앱은 만 14세 미만 아동을 대상으로 하지 않으며, 법정대리인 동의 절차를 두고 있지 않습니다. 만 14세 미만은 가입하지 마세요.</p>
+${H('13. 개인정보 보호책임자')}${L(['<b>성명:</b> '+APP_DEV+' (개발자)','<b>연락처:</b> '+mail])}
+${H('14. 권익침해 구제 방법')}<p>개인정보 침해에 대한 신고나 상담은 아래 기관에 문의할 수 있습니다.</p>${L(remedy.map(r=>`${r[0]}: ${r[2]}, 국번 없이 ${r[3]}`))}
+${H('15. 처리방침의 변경')}<p>이 처리방침을 바꾸는 경우 시행 7일 전부터 이 화면에 알립니다.</p>${L([PRIVACY_DATE.replace(/-/g,'. ')+'. 제정'])}`;
+  return `<h1>Privacy Policy</h1><p class="pvdate">Effective ${PRIVACY_DATE}</p>
+<p>MyBookShelf ("the app") sets out this privacy policy under Article 30 of the Korean Personal Information Protection Act (PIPA) to protect users' personal information and handle related requests promptly.</p>
+${H('1. Purposes of processing')}${L(['Sign-up and sign-in (identifying you)','Storing your reading records and syncing them across devices','Finding errors and improving the app'])}<p>Your information is not used for advertising, marketing or user profiling.</p>
+${H('2. Information we process')}${L(['<b>Account:</b> email address and password (stored encrypted; not visible even to the operator). If you sign in with Google: name, email address and Google account identifier','<b>What you enter:</b> book details, reading status and dates, pages read, ratings, notes and quotes, cover and quote photos you upload, loan records (names of people or places you type in), app settings','<b>Generated automatically:</b> error logs (error message, browser type, screen) and sign-in records (such as IP address, processed by Firebase for security), and a book search usage count (date and count only, to apply the daily limit)'])}<p>When you write another person\'s name in a loan record, please enter only what you need to tell them apart.</p>
+${H('3. Retention period')}<p>Kept until you delete your account. Deleting it in Settings > Delete data > Delete account and all data erases it without delay. No information is retained under other laws.</p>
+${H('4. Provision to third parties')}<p>We do not provide your personal information to third parties, except where required by law.</p>
+${H('5. Processors')}${L(['<b>Processor:</b> Google LLC','<b>Tasks:</b> account authentication (Firebase Authentication), data storage (Cloud Firestore, Cloud Storage), server functions (Cloud Functions)'])}
+${H('6. Transfer outside Korea')}<p>Under Article 28-8 of PIPA, personal information is transferred abroad as follows.</p>${L(['<b>Recipient:</b> Google LLC (privacy contact: support.google.com/policies)','<b>Countries:</b> the United States and other countries where Google operates data centers','<b>When and how:</b> sent over the network whenever you use the app','<b>Items:</b> those listed in section 2','<b>Purpose and retention:</b> the tasks in section 5, for the period in section 3','<b>How to refuse:</b> use the app without signing in. Your records then stay only on your device and are not transferred, but syncing across devices is not available.'])}
+${H('7. External services used for book search')}<p>When you search for books, your search terms (title, author, ISBN) are sent to Kakao, YES24 (through the app\'s server) and Google Books, and Open Library may be used to look up page counts. Your account information is not sent with them. Google Books and Open Library are reached directly from your browser, so your IP address may reach those providers. Store links (Naver Books, YES24, Aladin, Amazon) take you to those sites, where their own privacy policies apply.</p>
+${H('8. Destruction')}<p>When you delete your account, your account, reading records, photos and search usage count on the server are deleted without delay and cannot be recovered. Backup files you downloaded are under your own control.</p>
+${H('9. Your rights')}${L(['<b>Access and correction:</b> view and edit everything in the app at any time','<b>Deletion:</b> delete individual books, or Settings > Delete data','<b>Suspension:</b> sign out or delete your account','<b>Export:</b> Settings > Export data (JSON file)'])}<p>For anything you cannot do in the app, contact the privacy officer in section 13 and it will be handled without delay.</p>
+${H('10. Security measures')}${L(['Encryption in transit (HTTPS)','Encrypted password storage (Firebase Authentication)','Security rules that let only you access your data','API keys for external services kept on the server','Minimal operator access to data'])}
+${H('11. Automatic collection')}<p>The app uses no cookies, advertising or analytics tools. To work and keep you signed in, it stores records and settings in browser storage (localStorage, IndexedDB), which you can clear by deleting site data in your browser.</p>
+${H('12. Children under 14')}<p>The app is not intended for children under 14 and has no parental consent process. Children under 14 should not sign up.</p>
+${H('13. Privacy officer')}${L(['<b>Name:</b> '+APP_DEV+' (developer)','<b>Contact:</b> '+mail])}
+${H('14. Remedies')}<p>For reports or advice about privacy infringement, you can contact the following Korean agencies.</p>${L(remedy.map(r=>`${r[1]}: ${r[2]}, ${r[3]} (in Korea)`))}
+${H('15. Changes')}<p>Any change to this policy is announced on this screen at least 7 days before it takes effect.</p>${L(['Established '+PRIVACY_DATE])}`}
+function openPrivacy(){const el=$('#pvsheet');if(!el)return;$('#pvIn').innerHTML=`<div class="pvbar"><button class="iconbtn" data-action="pvclose" aria-label="${lang()==='en'?'Close':'닫기'}">${svgI('back')}</button></div><article class="pvdoc">${privacyHTML()}</article>`;el.classList.add('open');el.setAttribute('aria-hidden','false');el.scrollTop=0}
+function closePrivacy(){const el=$('#pvsheet');if(el){el.classList.remove('open');el.setAttribute('aria-hidden','true')}}
+
 function storeLinks(r){const au=String(r.author||'').split(/[,;·]| and | & /)[0].trim();const q=encodeURIComponent([String(r.title||'').split(/[:(]/)[0].trim(),au].filter(Boolean).join(' '));
   return `${srcOn('naver')?`<a href="https://search.shopping.naver.com/book/search?query=${q}" target="_blank" rel="noopener">네이버</a>`:''}${srcOn('yes24')?`<a href="https://www.yes24.com/product/search?query=${q}" target="_blank" rel="noopener">예스24</a>`:''}<a href="https://www.aladin.co.kr/search/wsearchresult.aspx?SearchWord=${q}" target="_blank" rel="noopener">알라딘</a><a href="https://www.amazon.com/s?k=${q}&i=stripbooks" target="_blank" rel="noopener">Amazon</a>`}
 function searchPanelHTML(f){const rs=f.results;
@@ -1524,6 +1608,8 @@ document.addEventListener('click',e=>{
     case 'fopt':{const k=t.dataset.k;S.form[k]=!S.form[k];if(k==='owned')S.form.ownedTouched=true;if(k==='borrowed')autoOwned(S.form);renderForm();if(LOAN[k]&&S.form[k])setTimeout(()=>$(`.loanin.${LOAN[k].cls} input[type=text]`)?.focus(),30);break}
     case 'fstatus':S.form.status=t.dataset.s;renderForm();break;
     case 'fcolor':S.form.color=t.dataset.c;renderForm();break;
+    case 'privacy':openPrivacy();break;
+    case 'pvclose':closePrivacy();break;
     case 'fcancel':closeForm();break;
     case 'fsave':saveForm();break;
   }
@@ -1532,7 +1618,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.getAttribute&&e.target.getAttribute('role')==='button'&&e.target.dataset.action){e.target.click();return}
   const st=e.target.closest&&e.target.closest('.stars');
   if(st&&S.openId&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const b=S.books[S.openId];b.rating=Math.max(0,Math.min(5,(b.rating||0)+(e.key==='ArrowRight'?.5:-.5)));putBook(b);renderSheet();$('.stars')?.focus();e.preventDefault()}
-  if(e.key==='Escape'){if(S.drawer){closeDrawer();return}if(S.form)closeForm();else if(S.openId)closeBook()}
+  if(e.key==='Escape'){if($('#pvsheet')?.classList.contains('open')){closePrivacy();return}if(S.drawer){closeDrawer();return}if(S.form)closeForm();else if(S.openId)closeBook()}
   if(e.key==='Enter'&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){e.preventDefault();emailLogin();return}
   if(e.key==='Enter'&&S.form&&e.target.tagName==='INPUT'){e.preventDefault();if(e.target.id==='f-q')bookSearch();else saveForm()}
 });
