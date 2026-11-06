@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b104">
+<link rel="manifest" href="manifest.webmanifest?b105">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b104">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b104">
+<link rel="apple-touch-icon" href="icon-180.png?b105">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b105">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -714,7 +714,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.6.1',APP_BUILD_NO=104,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.6.2',APP_BUILD_NO=105,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -1964,7 +1964,8 @@ $('#imp').addEventListener('change',e=>{const t=e.target;
   if(k==='sheet'){IMP.sheet=t.value;useSheet()}if(k==='split')IMP.split=t.checked;if(k==='policy')IMP.policy=t.value;
   const st=$('#imp').scrollTop;renderImp();$('#imp').scrollTop=st});
 
-/* ---------- 받기: GMDLibrary(GMDSOFT 사내 도서관)에서 끌어 놓은 책 (1.6.1) ----------
+/* ---------- 받기: GMDLibrary(GMDSOFT 사내 도서관)에서 끌어 놓은 책 (1.6.2) ----------
+   표지: 사내에서 직접 찍은 표지는 이미지로 함께 온다. 나머지(예스24 등 서점 표지)는 약관상 넘겨받지 않고, 이 앱이 자기 검색(카카오·예스24·Google·Open Library)으로 ISBN·제목으로 다시 찾는다.
    사내 화면(https://bizcenter.gmdsoft.co.kr)에서 이 앱을 나란히 띄우고 책을 끌어다 놓으면 여기 서재에 복사한다.
    끌어 놓기: text/plain 'MYBOOKSHELF:{"books":[...]}' / 버튼 보내기: postMessage {type:'mbs:add',books} (허용한 주소에서만) */
 const MBS_IN_ORIGINS=['https://bizcenter.gmdsoft.co.kr'];
@@ -1981,10 +1982,23 @@ function mbsTakeBooks(arr){if(!Array.isArray(arr))return {added:0,dup:0};const h
       startedAt:str(x.startedAt,10),finishedAt:str(x.finishedAt,10),source:'GMDLibrary',createdAt:now-i};
     if(/^#[0-9a-f]{6}$/i.test(x.color||''))b.color=x.color;
     if(/^(data:image\/|https:\/\/)/.test(x.cover||'')&&!/image\.yes24\.com/i.test(x.cover))b.cover=x.cover;
-    putBook(b);added++});
-  if(added)renderAll();
+    putBook(b);added++;if(!b.cover)mbsNeedCover.push(b.id)});
+  if(added){renderAll();setTimeout(mbsFillCovers,300)}
   toast(added?`${added}권을 서재에 복사했어요${dup?` (이미 있는 ${dup}권은 건너뜀)`:''}`:dup?'이미 서재에 있는 책이에요':'복사할 책이 없어요');
   return {added,dup}}
+const mbsNeedCover=[];let mbsCoverBusy=false;
+/* 받은 책의 표지를 이 앱의 검색으로 찾는다 (ISBN 우선, 없으면 제목이 같은 책). 한 번에 30권까지, 한 권씩 */
+async function mbsFindCover(b){const isb=cleanIsbn(b.isbn),t=x=>String(x||'').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'');
+  const tries=isb?[['kakao',()=>searchKakao(isb,true)],['yes24',()=>searchYes24(isb)],['google',()=>searchGoogle('isbn:'+isb)],['openlib',()=>searchOpenLib(isb,true)]]
+    :[['kakao',()=>searchKakao(b.title,false)],['yes24',()=>searchYes24(b.title)],['google',()=>searchGoogle(b.title,/[가-힣]/.test(b.title)?'ko':'')]];
+  for(const [k,fn] of tries){if(k!=='openlib'&&!srcOn(k))continue;try{const rs=(await fn())||[];
+      const hit=rs.find(r=>r.cover&&(isb?cleanIsbn(r.isbn)===isb||rs.length===1:t(r.title)===t(b.title)))||(isb?rs.find(r=>r.cover):null);
+      if(hit&&hit.cover)return hit.cover}catch(e){}}
+  return ''}
+async function mbsFillCovers(){if(mbsCoverBusy)return;mbsCoverBusy=true;let n=0;
+  try{while(mbsNeedCover.length&&n<30){const id=mbsNeedCover.shift(),b=S.books[id];if(!b||b.cover)continue;n++;
+      const c=await mbsFindCover(b);if(c&&S.books[id]&&!S.books[id].cover){S.books[id].cover=c;putBook(S.books[id]);renderSoon()}}}
+  finally{mbsCoverBusy=false}}
 function mbsParse(t){if(typeof t!=='string'||!t.startsWith(MBS_MARK))return null;try{const j=JSON.parse(t.slice(MBS_MARK.length));return j&&Array.isArray(j.books)?j.books:null}catch(e){return null}}
 const mbsParent=()=>{try{const o=new URL(document.referrer).origin;return MBS_IN_ORIGINS.includes(o)?o:''}catch(e){return ''}};
 const mbsTypes=e=>[...((e.dataTransfer&&e.dataTransfer.types)||[])];
