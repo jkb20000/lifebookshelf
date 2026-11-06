@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b103">
+<link rel="manifest" href="manifest.webmanifest?b104">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b103">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b103">
+<link rel="apple-touch-icon" href="icon-180.png?b104">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b104">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -685,6 +685,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
   .tile:hover .cv,.titem:hover .tcv{transform:translateY(-3px)}
   .ccard:hover,.rcard:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
 }
+body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-radius:14px}
 </style>
 </head>
 <body>
@@ -713,7 +714,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.6.0',APP_BUILD_NO=103,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.6.1',APP_BUILD_NO=104,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -1963,6 +1964,37 @@ $('#imp').addEventListener('change',e=>{const t=e.target;
   if(k==='sheet'){IMP.sheet=t.value;useSheet()}if(k==='split')IMP.split=t.checked;if(k==='policy')IMP.policy=t.value;
   const st=$('#imp').scrollTop;renderImp();$('#imp').scrollTop=st});
 
+/* ---------- 받기: GMDLibrary(GMDSOFT 사내 도서관)에서 끌어 놓은 책 (1.6.1) ----------
+   사내 화면(https://bizcenter.gmdsoft.co.kr)에서 이 앱을 나란히 띄우고 책을 끌어다 놓으면 여기 서재에 복사한다.
+   끌어 놓기: text/plain 'MYBOOKSHELF:{"books":[...]}' / 버튼 보내기: postMessage {type:'mbs:add',books} (허용한 주소에서만) */
+const MBS_IN_ORIGINS=['https://bizcenter.gmdsoft.co.kr'];
+const MBS_MARK='MYBOOKSHELF:';
+const mbsKey=b=>[b.title,b.author].map(v=>String(v||'').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'')).join('|');
+const MBS_STATUS=['want','reading','done','unread'];
+function mbsTakeBooks(arr){if(!Array.isArray(arr))return {added:0,dup:0};const have=new Set(list().map(mbsKey)),now=Date.now();let added=0,dup=0;
+  arr.slice(0,500).forEach((x,i)=>{if(!x||!x.title)return;const k=mbsKey(x);if(have.has(k)){dup++;return}have.add(k);
+    const str=(v,n)=>String(v??'').slice(0,n),pages=Math.max(0,+x.pages||0);
+    const b={id:uid(),title:str(x.title,300),author:str(x.author,200),publisher:str(x.publisher,200),isbn:str(x.isbn,20).replace(/[^\dXx]/g,'').slice(0,13),
+      pages,current:Math.min(Math.max(0,+x.current||0),pages||Infinity),status:MBS_STATUS.includes(x.status)?x.status:'want',owned:!!x.owned,format:FORMAT[x.format]?x.format:'paper',
+      category:str(x.category,60),rating:Math.max(0,Math.min(5,Math.round((+x.rating||0)*2)/2)),review:str(x.review,20000),summary:str(x.summary,20000),
+      quotes:(Array.isArray(x.quotes)?x.quotes:[]).slice(0,300).filter(q=>q&&q.text).map(q=>({id:uid(),text:str(q.text,5000),page:str(q.page,10),at:+q.at||now})),
+      startedAt:str(x.startedAt,10),finishedAt:str(x.finishedAt,10),source:'GMDLibrary',createdAt:now-i};
+    if(/^#[0-9a-f]{6}$/i.test(x.color||''))b.color=x.color;
+    if(/^(data:image\/|https:\/\/)/.test(x.cover||'')&&!/image\.yes24\.com/i.test(x.cover))b.cover=x.cover;
+    putBook(b);added++});
+  if(added)renderAll();
+  toast(added?`${added}권을 서재에 복사했어요${dup?` (이미 있는 ${dup}권은 건너뜀)`:''}`:dup?'이미 서재에 있는 책이에요':'복사할 책이 없어요');
+  return {added,dup}}
+function mbsParse(t){if(typeof t!=='string'||!t.startsWith(MBS_MARK))return null;try{const j=JSON.parse(t.slice(MBS_MARK.length));return j&&Array.isArray(j.books)?j.books:null}catch(e){return null}}
+const mbsParent=()=>{try{const o=new URL(document.referrer).origin;return MBS_IN_ORIGINS.includes(o)?o:''}catch(e){return ''}};
+const mbsTypes=e=>[...((e.dataTransfer&&e.dataTransfer.types)||[])];
+document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop')});
+document.addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('mbs-drop')});
+document.addEventListener('drop',e=>{document.body.classList.remove('mbs-drop');const books=mbsParse(e.dataTransfer&&e.dataTransfer.getData('text/plain'));if(!books)return;e.preventDefault();
+  const r=mbsTakeBooks(books),o=mbsParent();if(o&&window.parent!==window)window.parent.postMessage({type:'mbs:added',...r},o)});
+window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:add')return;const r=mbsTakeBooks(e.data.books);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
+Object.assign(EN_STR,{'이미 서재에 있는 책이에요':'Already on your shelf','복사할 책이 없어요':'Nothing to copy'});
+EN_RX.unshift([/(\d+)권을 서재에 복사했어요/g,'Copied $1 books to your shelf'],[/ \(이미 있는 (\d+)권은 건너뜀\)/g,' ($1 already there, skipped)']);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 loadLocal();loadTimer();applySkin();migrateCats();renderAll();initCloud();
 </script>
