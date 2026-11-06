@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b105">
+<link rel="manifest" href="manifest.webmanifest?b106">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b105">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b105">
+<link rel="apple-touch-icon" href="icon-180.png?b106">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b106">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -165,6 +165,7 @@
 .tonerow b{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
 .gcond{margin-top:10px}.gcond b{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}.gcond ul{margin:0;padding-left:18px}.gcond li{margin:2px 0}
 .lmeth{display:inline-block;background:var(--chip);color:var(--ink);border-radius:999px;padding:1px 9px;font-size:12px;margin-right:4px}
+.seg.authtab{margin-bottom:10px;grid-template-columns:1fr 1fr}.verify p{margin:4px 0}
 .lgf input{display:block;width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .sel{width:100%;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:15px;-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
 .field input#f-catnew{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px}
@@ -714,7 +715,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.6.2',APP_BUILD_NO=105,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.7.0',APP_BUILD_NO=106,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -819,18 +820,30 @@ function initFirebase(){const cfg=window.FIREBASE_CONFIG;if(!cfg||!cfg.apiKey||!
   FB={auth:firebase.auth(),db:firebase.firestore(),st:(cfg.storageBucket&&firebase.storage)?firebase.storage():null,stOff:false};try{FB.db.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(e){}
   dl={save:async({filename,data})=>{const blob=new Blob([data],{type:filename.endsWith('.json')?'application/json':'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)}};
   FB.auth.getRedirectResult().catch(e=>{toast('로그인에 실패했어요: '+(e.code||''))});
-  FB.auth.onAuthStateChanged(u=>{S.user=u?{name:u.displayName||'',email:u.email||'',uid:u.uid,hasPw:(u.providerData||[]).some(p=>p.providerId==='password'),hasG:(u.providerData||[]).some(p=>p.providerId==='google.com')}:null;
-    if(u){attachFirestore(u.uid)}else{cloud=null;setSync('로그인하면 모든 기기에서 같은 서재를 볼 수 있어요');renderSoon()}});
+  FB.auth.onAuthStateChanged(onAuthUser);
   return true}
+/* email accounts must verify their address before syncing; Google accounts are already verified */
+function onAuthUser(u){const pd=u?(u.providerData||[]):[];
+  S.user=u?{name:u.displayName||'',email:u.email||'',uid:u.uid,hasPw:pd.some(p=>p.providerId==='password'),hasG:pd.some(p=>p.providerId==='google.com'),unverified:!u.emailVerified&&!pd.some(p=>p.providerId==='google.com')}:null;
+  if(u&&!S.user.unverified){attachFirestore(u.uid)}
+  else{cloud=null;setSync(u?'이메일 인증을 마치면 모든 기기에서 같은 서재를 볼 수 있어요':'로그인하면 모든 기기에서 같은 서재를 볼 수 있어요');renderSoon()}}
+function authLang(){if(FB)FB.auth.languageCode=lang()==='en'?'en':'ko'}
+async function emailSignup(){if(!FB)return;const em=($('#lg-email')?.value||'').trim(),pw=$('#lg-pw')?.value||'',pw2=$('#lg-pw2')?.value||'';
+  if(!em||!pw){toast('이메일과 비밀번호를 입력해 주세요');return}if(pw.length<6){toast('비밀번호는 6자 이상이어야 해요');return}if(pw!==pw2){toast('비밀번호가 서로 달라요. 다시 확인해 주세요');return}
+  try{const c=await FB.auth.createUserWithEmailAndPassword(em,pw);authLang();await c.user.sendEmailVerification();toast('가입했어요. 메일함에서 인증 링크를 눌러 주세요')}
+  catch(e){toast(AUTH_ERR[e.code]||'가입에 실패했어요: '+(e.code||''))}}
+async function resendVerify(){const u=FB&&FB.auth.currentUser;if(!u)return;try{authLang();await u.sendEmailVerification();toast('인증 메일을 다시 보냈어요')}catch(e){toast(AUTH_ERR[e.code]||'메일을 보내지 못했어요: '+(e.code||''))}}
+async function checkVerify(){const u=FB&&FB.auth.currentUser;if(!u)return;try{await u.reload();if(FB.auth.currentUser.emailVerified){await FB.auth.currentUser.getIdToken(true);onAuthUser(FB.auth.currentUser);toast('인증을 마쳤어요')}else toast('아직 인증되지 않았어요. 메일의 링크를 눌렀는지 확인해 주세요')}catch(e){toast('확인하지 못했어요: '+(e.code||''))}}
+async function resetPw(){if(!FB)return;const em=($('#lg-email')?.value||'').trim();if(!em){toast('위 칸에 가입한 이메일을 입력한 뒤 눌러 주세요');return}
+  try{authLang();await FB.auth.sendPasswordResetEmail(em)}catch(e){if(e.code==='auth/invalid-email'){toast(AUTH_ERR[e.code]);return}}
+  toast('가입된 이메일이면 비밀번호 재설정 메일이 도착해요')}
 function fbLogin(){if(!FB)return;const p=new firebase.auth.GoogleAuthProvider();const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
   (standalone?FB.auth.signInWithRedirect(p):FB.auth.signInWithPopup(p)).catch(e=>{if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user')FB.auth.signInWithRedirect(p);else toast('로그인에 실패했어요: '+(e.code||''))})}
 function fbLogout(){if(FB)FB.auth.signOut()}
-const AUTH_ERR={'auth/invalid-email':'이메일 형식이 맞지 않아요','auth/wrong-password':'비밀번호가 틀렸어요','auth/invalid-credential':'이메일 또는 비밀번호가 틀렸어요','auth/weak-password':'비밀번호는 6자 이상이어야 해요','auth/too-many-requests':'시도가 많아요. 잠시 후 다시 해주세요','auth/email-already-in-use':'이 이메일은 Google로 가입되어 있어요. Google로 로그인하거나, 브라우저에서 Google로 로그인한 뒤 설정 > 계정에서 비밀번호를 등록해 주세요','auth/operation-not-allowed':'Firebase 콘솔에서 이메일/비밀번호 로그인을 켜주세요'};
+const AUTH_ERR={'auth/invalid-email':'이메일 형식이 맞지 않아요','auth/wrong-password':'비밀번호가 틀렸어요','auth/invalid-credential':'이메일 또는 비밀번호가 틀렸어요','auth/weak-password':'비밀번호는 6자 이상이어야 해요','auth/too-many-requests':'시도가 많아요. 잠시 후 다시 해주세요','auth/email-already-in-use':'이미 가입된 이메일이에요. 로그인 탭에서 로그인하거나, Google로 가입했다면 Google로 로그인해 주세요','auth/user-disabled':'사용이 중지된 계정이에요','auth/operation-not-allowed':'Firebase 콘솔에서 이메일/비밀번호 로그인을 켜주세요'};
 async function emailLogin(){if(!FB)return;const em=($('#lg-email')?.value||'').trim(),pw=$('#lg-pw')?.value||'';if(!em||!pw){toast('이메일과 비밀번호를 입력해 주세요');return}
   try{await FB.auth.signInWithEmailAndPassword(em,pw)}
-  catch(e){if(e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'){
-      if(S.signup){try{await FB.auth.createUserWithEmailAndPassword(em,pw);toast('가입하고 로그인했어요')}catch(e2){toast(AUTH_ERR[e2.code]||'가입에 실패했어요: '+(e2.code||''))}}
-      else{S.signup=true;renderMain();toast('등록되지 않은 이메일이에요. 처음이면 "가입하고 로그인"을 눌러주세요')}}
+  catch(e){if(e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'||e.code==='auth/wrong-password')toast('이메일 또는 비밀번호가 맞지 않아요. 처음이면 회원가입 탭을 이용해 주세요');
     else toast(AUTH_ERR[e.code]||'로그인에 실패했어요: '+(e.code||''))}}
 async function setPassword(){if(!FB||!FB.auth.currentUser)return;const pw=$('#sp-pw')?.value||'';if(pw.length<6){toast('비밀번호는 6자 이상이어야 해요');return}
   const u=FB.auth.currentUser;try{await u.linkWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,pw));S.user.hasPw=true;renderMain();toast('비밀번호를 설정했어요. 이제 홈 화면 앱에서 이메일로 로그인할 수 있어요')}
@@ -838,12 +851,17 @@ async function setPassword(){if(!FB||!FB.auth.currentUser)return;const pw=$('#sp
     else if(e.code==='auth/requires-recent-login')toast('보안을 위해 로그아웃 후 다시 로그인한 뒤 설정해 주세요');else toast(AUTH_ERR[e.code]||'비밀번호 설정에 실패했어요: '+(e.code||''))}}
 const GCOND=['Safari, Chrome 같은 브라우저에서만 쓸 수 있어요. 아이폰 홈 화면 앱에서는 iOS 제약으로 동작하지 않아요.','홈 화면 앱에서도 쓰려면 브라우저에서 Google로 로그인한 뒤 설정 > 계정에서 비밀번호를 등록하세요.','비밀번호를 등록해도 계정이 하나 더 생기지 않아요. 같은 계정에 이메일 로그인 방법이 추가돼요.'];
 const gCondHTML=()=>`<div class="note-box gcond"><b>Google 로그인 사용 조건</b><ul>${GCOND.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
-function loginFormHTML(){const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
-  return `<div class="lgf"><input type="email" id="lg-email" placeholder="이메일" autocomplete="username" inputmode="email"><input type="password" id="lg-pw" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
-    <div class="hbtns"><button class="btn small" data-action="emaillogin">${S.signup?'가입하고 로그인':'이메일로 로그인'}</button>${standalone?'':'<button class="btn ghost small" data-action="login">Google로 로그인</button>'}</div>
-    <p class="hint">처음 가입한 방법으로 로그인하세요. 이메일 가입은 쓰고 싶은 이메일과 비밀번호를 넣고 로그인하면 바로 돼요.</p><p class="hint">가입 전에 <button class="linkbtn" data-action="privacy">개인정보 처리방침</button>을 확인해 주세요.</p>${gCondHTML()}</div>`}
+function loginFormHTML(){const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches,su=S.authTab==='signup';
+  return `<div class="lgf"><div class="seg seg2 authtab" role="tablist"><button role="tab" data-action="authtab" data-v="login" aria-pressed="${!su}">로그인</button><button role="tab" data-action="authtab" data-v="signup" aria-pressed="${su}">회원가입</button></div>
+    <input type="email" id="lg-email" placeholder="이메일" autocomplete="username" inputmode="email"><input type="password" id="lg-pw" placeholder="${su?'비밀번호 (6자 이상)':'비밀번호'}" autocomplete="${su?'new-password':'current-password'}">${su?'<input type="password" id="lg-pw2" placeholder="비밀번호 확인" autocomplete="new-password">':''}
+    <div class="hbtns"><button class="btn small" data-action="${su?'emailsignup':'emaillogin'}">${su?'이메일로 가입하기':'이메일로 로그인'}</button>${standalone?'':`<button class="btn ghost small" data-action="login">${su?'Google로 가입':'Google로 로그인'}</button>`}</div>
+    ${su?'<p class="hint">가입하면 입력한 이메일로 인증 메일이 가요. 메일의 링크를 눌러야 모든 기기 동기화가 시작돼요.</p>':'<p class="hint"><button class="linkbtn" data-action="resetpw">비밀번호를 잊으셨나요?</button></p><p class="hint">처음이면 회원가입 탭에서 가입해 주세요. Google로 가입했다면 Google로 로그인하세요.</p>'}
+    <p class="hint">가입 전에 <button class="linkbtn" data-action="privacy">개인정보 처리방침</button>을 확인해 주세요.</p>${gCondHTML()}</div>`}
+function verifyHTML(u){return `<div class="sec" id="sec-account"><h2>계정</h2><div class="verify"><p><b>${esc(u.email)}</b></p><p class="hint">이 주소로 인증 메일을 보냈어요. 메일의 링크를 누른 뒤 <b>인증 완료</b>를 눌러 주세요. 메일이 안 보이면 스팸함도 확인해 주세요. 인증 전에는 이 기기에만 저장돼요.</p>
+  <div class="hbtns" style="justify-content:flex-start"><button class="btn small" data-action="checkverify">인증 완료</button><button class="btn ghost small" data-action="resendverify">메일 다시 보내기</button><button class="btn ghost small" data-action="logout">로그아웃</button></div></div></div>`}
 function accountHTML(){if(typeof FB==='undefined'||!FB)return'';const u=S.user;
   if(!u)return `<div class="sec" id="sec-account"><h2>계정</h2>${loginFormHTML()}</div>`;
+  if(u.unverified)return verifyHTML(u);
   const m=[u.hasG?'Google':'',u.hasPw?'이메일':''].filter(Boolean);
   return `<div class="sec" id="sec-account"><h2>계정</h2><p style="margin:0;font-size:14px;overflow-wrap:anywhere">${esc(u.email||u.name||'')}</p>
     <p class="hint" style="margin:4px 0 12px">로그인 방법: ${m.map(x=>`<span class="lmeth">${x}</span>`).join(' ')}</p>
@@ -937,7 +955,16 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.da
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','연락처 ':'Contact ','오늘 카카오와 예스24 검색 한도를 다 썼어요. 내일 다시 쓸 수 있어요':'Today\'s Kakao and YES24 search limit is used up. It resets tomorrow','개인정보 처리방침':'Privacy Policy','가입 전에 ':'Before signing up, please read the ','을 확인해 주세요.':'.','카카오':'Kakao','네이버':'Naver','책 유형':'Format','분류':'Category','소장':'Owned','검색: ':'Searching: ',' 설정에서 켜고 끌 수 있어요.':' Change in Settings.','카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'Kakao Books and YES24 are available once you sign in.','카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.':'Kakao Books and YES24 are available in the web app when signed in.','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
+'가입하면 입력한 이메일로 인증 메일이 가요. 메일의 링크를 눌러야 모든 기기 동기화가 시작돼요.':'After you sign up, a verification email is sent to that address. Syncing across devices starts once you click the link.',
+'처음이면 회원가입 탭에서 가입해 주세요. Google로 가입했다면 Google로 로그인하세요.':'New here? Use the Sign up tab. If you signed up with Google, sign in with Google.',
+'이 주소로 인증 메일을 보냈어요. 메일의 링크를 누른 뒤 ':'We sent a verification email to this address. Click the link in it, then tap ','인증 완료':'I\'ve verified','를 눌러 주세요. 메일이 안 보이면 스팸함도 확인해 주세요. 인증 전에는 이 기기에만 저장돼요.':'. If you cannot find it, check your spam folder. Until then, your data stays on this device only.',
+'메일 다시 보내기':'Resend email','비밀번호가 서로 달라요. 다시 확인해 주세요':'The passwords do not match. Please check again','가입했어요. 메일함에서 인증 링크를 눌러 주세요':'Signed up. Please click the verification link in your email',
+'인증 메일을 다시 보냈어요':'Verification email sent again','인증을 마쳤어요':'Email verified','아직 인증되지 않았어요. 메일의 링크를 눌렀는지 확인해 주세요':'Not verified yet. Please check that you clicked the link in the email',
+'위 칸에 가입한 이메일을 입력한 뒤 눌러 주세요':'Enter your sign-up email above, then tap again','가입된 이메일이면 비밀번호 재설정 메일이 도착해요':'If that email is registered, a password reset email is on its way',
+'이메일 또는 비밀번호가 맞지 않아요. 처음이면 회원가입 탭을 이용해 주세요':'Email or password is incorrect. New here? Use the Sign up tab',
+'이미 가입된 이메일이에요. 로그인 탭에서 로그인하거나, Google로 가입했다면 Google로 로그인해 주세요':'This email is already registered. Sign in on the Sign in tab, or sign in with Google if you signed up with Google',
+'이메일 인증을 마치면 모든 기기에서 같은 서재를 볼 수 있어요':'Verify your email to see the same shelf on all your devices','사용이 중지된 계정이에요':'This account has been disabled','연락처 ':'Contact ','오늘 카카오와 예스24 검색 한도를 다 썼어요. 내일 다시 쓸 수 있어요':'Today\'s Kakao and YES24 search limit is used up. It resets tomorrow','개인정보 처리방침':'Privacy Policy','가입 전에 ':'Before signing up, please read the ','을 확인해 주세요.':'.','카카오':'Kakao','네이버':'Naver','책 유형':'Format','분류':'Category','소장':'Owned','검색: ':'Searching: ',' 설정에서 켜고 끌 수 있어요.':' Change in Settings.','카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'Kakao Books and YES24 are available once you sign in.','카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.':'Kakao Books and YES24 are available in the web app when signed in.','자동으로 찾지 못했어요':'Not found automatically','API 키 저장됨 ':'API key saved ','바꾸기':'Change','예스24 API 키 붙여넣기':'Paste your YES24 API key','예스24 개발자센터에서 받은 키를 넣으면 켜져요.':'Turns on once you add the key from YES24 Developers.','카카오 개발자센터에서 받은 REST API 키를 넣으면 켜져요.':'Turns on once you add the REST API key from Kakao Developers.',' 키는 내 계정 설정에만 저장되고 앱 파일에는 들어가지 않아요.':' The key is kept only in your account settings, not in the app files.','카카오 REST API 키 붙여넣기':'Paste your Kakao REST API key','키를 붙여 넣어 주세요':'Please paste the key',' 키를 저장했어요':' key saved',' 키를 지웠어요':' key removed','예스24':'YES24','국내 책, 쪽수와 책 소개':'Korean books, pages and descriptions','링크':'Link','네이버 책에서 검색 결과 보기':'See results on Naver Books','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요':'Turns the search link and per-book Naver Books links on or off together',' 네이버 책은 링크로 열려요.':' Naver Books opens as a link.',' 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. ':' The app searches directly and fills in results, cover, pages and ISBN. ',' 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':' Cannot be searched from the app, so tapping opens that site\'s results. Enabled APIs are searched together; Korean queries list Kakao first, English queries Google first.','개발자':'Developer','버전은 기능이 바뀔 때, 빌드는 파일을 새로 올릴 때마다 올라가요. 아티팩트와 웹앱의 빌드가 같으면 화면도 같아요.':'The version changes with features, the build with every file release. Same build means the same screens in the artifact and the web app.','‹ 검색 결과로':'‹ Back to results','쪽수 찾는 중...':'Finding pages...','ISBN으로 자동 입력':'Filled from ISBN','국내 판본, 국내 표지':'Korean editions and covers','해외 책, 쪽수와 설명':'International books, pages and descriptions','옛 판본, 다양한 표지':'Older editions, more covers','네이버 책 링크':'Naver Books link','검색 결과 위에 네이버 책 검색 바로가기':'Shortcut to Naver Books above results','켜 둔 엔진을 동시에 검색해요. 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.':'Searches all enabled engines at once. Korean queries list Kakao first, English queries Google first.','에서 찾아요. 설정에서 켜고 끌 수 있어요.':'. Turn engines on or off in Settings.','검색 엔진 없음':'No engine','국내':'Korean','해외':'International','에서 찾아요. 검색 엔진은 설정에서 바꿀 수 있어요.':'. Change engines in Settings.','국내 하나, 해외 하나를 함께 검색해요. 한글로 찾으면 국내 결과가, 영문으로 찾으면 해외 결과가 먼저 나와요.':'Searches one Korean and one international engine together. Korean queries list Korean results first, English queries international results first.','네이버 책은 앱에서 직접 검색할 수 없어서, 고르면 검색 결과 맨 위에 네이버 책 검색 링크가 나와요.':'Naver Books cannot be searched from the app, so choosing it puts a Naver Books search link at the top of results.','네이버 책에서 찾기':'Search Naver Books','찾는 책이 없나요?':'Not found?','직접 입력':'Enter manually','빌려준 사람 (예: 김OO)':'Lent to (e.g. a friend)','돌려받을 날':'Due back',"부터":' since','빌려옴':'Borrowed','빌린 곳 (예: 시립도서관, 김OO)':'Borrowed from (e.g. city library, a friend)','반납일':'Due','반납함':'Returned','반납함으로 표시했어요':'Marked as returned','오늘 반납':'Due today','책 검색':'Book search','카카오 책':'Kakao Books','네이버 책':'Naver Books',' + Open Library에서 찾아 표지, 출판사, 쪽수, ISBN까지 채워요. 검색 포털은 설정에서 바꿀 수 있어요.':' + Open Library, filling in cover, publisher, pages and ISBN. Change the portal in Settings.','선택한 포털과 Open Library를 항상 함께 검색하고, 결과가 적으면 다른 포털로 보완해요. 한글로 찾으면 국내판이 먼저 나와요.':'Searches the chosen portal together with Open Library and fills gaps from the other portal. Korean queries show Korean editions first.','네이버 책, 알라딘, Amazon은 검색 결과와 책 화면의 서점 링크로 바로 열 수 있어요.':'Naver Books, Aladin and Amazon open directly from the store links in results and book pages.','앱 정보':'About','버전':'Version','웹앱':'Web app','아티팩트':'Artifact','아티팩트와 웹앱이 같은 버전이면 화면도 같아요.':'The artifact and the web app look the same when their versions match.','체리 우드':'Cherry wood','자작나무':'Birch','와인 셀러':'Wine cellar','나무 서재':'Wood','밝은 중성':'Light neutral','어두운 서재':'Dark','햇살 열람실':'Sunlit room','클래식 서재':'Classic study','모던 북카페':'Book café','브리티시 서재':'British library','메뉴로':'Menu','뒤로':'Back','요약본':'Summary','빌려줌':'Lent','돌려받음':'Returned','돌려받음으로 표시했어요':'Marked as returned','누구에게 빌려줬나요? (이름, 날짜 등 메모)':'Lent to whom? (name, date, notes)','추가할 곳':'Add to','옵션':'Options','(여러 개 선택 가능)':'(select any)','▶ 계속 읽기':'▶ Resume','시작일 추가':'Add start date','시작일':'Started','완독일':'Finished','날짜를 저장했어요':'Date saved','등록':'Shelve','안 읽음':'Unread','서재에 등록했어요':'Added to your shelf','읽는 중에 추가했어요':'Added to Reading','열기':'Open','Summary (요약본, 북 서머리)':'Summary (book summary)'});
 function vShelf(){
   const all=list(),fs=S.fset,rs=S.rset,sq=S.sq.trim().toLowerCase();
   const f=fs.size?(fs.size===1?[...fs][0]:'multi'):'all';
@@ -1361,7 +1388,7 @@ const httpsify=u=>String(u||'').replace(/^http:\/\//,'https://').replace('&edge=
 /* Kakao and YES24 go through the bookApi Firebase function: the API keys live only in Firebase Secret Manager.
    Only signed-in users of the web app can call it. */
 const PROXIED={kakao:1,yes24:1};
-const proxyOn=()=>typeof FB!=='undefined'&&!!FB&&!!(S.user&&S.user.uid)&&!!(window.firebase&&firebase.functions);
+const proxyOn=()=>typeof FB!=='undefined'&&!!FB&&!!(S.user&&S.user.uid&&!S.user.unverified)&&!!(window.firebase&&firebase.functions);
 async function bookApi(src,q,isIsbn){if(!proxyOn())return null;const fn=firebase.app().functions('asia-northeast3').httpsCallable('bookApi',{timeout:12000});const r=await fn({src,q,isbn:!!isIsbn});return r.data||{}}
 /* YES24 Open API: detail=Y gives page count in the search response */
 async function searchYes24(q){const j=await bookApi('yes24',q);if(!j)return [];
@@ -1518,6 +1545,11 @@ document.addEventListener('click',e=>{
     case 'tonereset':S.settings.toneB=50;S.settings.toneW=50;applySkin();putSettings();renderMain();break;
     case 'login':fbLogin();break;
     case 'emaillogin':emailLogin();break;
+    case 'emailsignup':emailSignup();break;
+    case 'authtab':S.authTab=t.dataset.v;renderMain();break;
+    case 'resetpw':resetPw();break;
+    case 'checkverify':checkVerify();break;
+    case 'resendverify':resendVerify();break;
     case 'setpw':setPassword();break;
     case 'logout':fbLogout();break;
     case 'migrimg':migrateImages();break;
