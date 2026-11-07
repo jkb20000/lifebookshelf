@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b107">
+<link rel="manifest" href="manifest.webmanifest?b108">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b107">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b107">
+<link rel="apple-touch-icon" href="icon-180.png?b108">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b108">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -715,7 +715,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.7.1',APP_BUILD_NO=107,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.8.0',APP_BUILD_NO=108,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -2037,6 +2037,14 @@ async function mbsFillCovers(){if(mbsCoverBusy)return;mbsCoverBusy=true;let n=0;
   finally{mbsCoverBusy=false}}
 function mbsParse(t){if(typeof t!=='string'||!t.startsWith(MBS_MARK))return null;try{const j=JSON.parse(t.slice(MBS_MARK.length));return j&&Array.isArray(j.books)?j.books:null}catch(e){return null}}
 const mbsParent=()=>{try{const o=new URL(document.referrer).origin;return MBS_IN_ORIGINS.includes(o)?o:''}catch(e){return ''}};
+/* ---------- GMDLibrary 연동 추가 (1.8.0): 로그인 상태 알리기 ----------
+   사내 화면(GMDLibrary BookShelf 탭)이 '가입했는지' 알 수 있게, 나란히 보기 칸(iframe) 안에서 열렸을 때만
+   로그인(이메일 인증 완료) 여부를 사내 주소에 알린다. 이메일 등 개인정보는 보내지 않는다.
+   기존 '받기' 코드(MBS_IN_ORIGINS, mbsParent) 바로 뒤에 넣는다. */
+const mbsSigned=()=>!!(S.user&&S.user.uid&&!S.user.unverified);
+const mbsStatus=()=>({type:'mbs:status',signedIn:mbsSigned(),app:APP_VERSION+' ('+APP_BUILD_NO+')'});
+window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:ping')return;if(e.source)e.source.postMessage(mbsStatus(),e.origin)});
+(()=>{const o=mbsParent();if(!o||window.parent===window)return;let last=null;const tick=()=>{const v=mbsSigned();if(v!==last){last=v;window.parent.postMessage(mbsStatus(),o)}};setTimeout(tick,800);setInterval(tick,1500)})();
 const mbsTypes=e=>[...((e.dataTransfer&&e.dataTransfer.types)||[])];
 document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop')});
 document.addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('mbs-drop')});
