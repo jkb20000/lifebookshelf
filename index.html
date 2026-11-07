@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b106">
+<link rel="manifest" href="manifest.webmanifest?b107">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b106">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b106">
+<link rel="apple-touch-icon" href="icon-180.png?b107">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b107">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -715,7 +715,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.7.0',APP_BUILD_NO=106,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.7.1',APP_BUILD_NO=107,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -826,7 +826,11 @@ function initFirebase(){const cfg=window.FIREBASE_CONFIG;if(!cfg||!cfg.apiKey||!
 function onAuthUser(u){const pd=u?(u.providerData||[]):[];
   S.user=u?{name:u.displayName||'',email:u.email||'',uid:u.uid,hasPw:pd.some(p=>p.providerId==='password'),hasG:pd.some(p=>p.providerId==='google.com'),unverified:!u.emailVerified&&!pd.some(p=>p.providerId==='google.com')}:null;
   if(u&&!S.user.unverified){attachFirestore(u.uid)}
-  else{cloud=null;setSync(u?'이메일 인증을 마치면 모든 기기에서 같은 서재를 볼 수 있어요':'로그인하면 모든 기기에서 같은 서재를 볼 수 있어요');renderSoon()}}
+  else{if(u)silentVerifyCheck();cloud=null;setSync(u?'이메일 인증을 마치면 모든 기기에서 같은 서재를 볼 수 있어요':'로그인하면 모든 기기에서 같은 서재를 볼 수 있어요');renderSoon()}}
+/* the cached user keeps emailVerified=false until it is reloaded: check quietly when the app opens or comes back to the front */
+let verifyBusy=false;async function silentVerifyCheck(){const u=FB&&FB.auth.currentUser;if(!u||verifyBusy)return;verifyBusy=true;
+  try{await u.reload();const c=FB.auth.currentUser;if(c&&c.emailVerified&&S.user&&S.user.unverified){await c.getIdToken(true);onAuthUser(c)}}catch(e){}finally{verifyBusy=false}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.user&&S.user.unverified)silentVerifyCheck()});
 function authLang(){if(FB)FB.auth.languageCode=lang()==='en'?'en':'ko'}
 async function emailSignup(){if(!FB)return;const em=($('#lg-email')?.value||'').trim(),pw=$('#lg-pw')?.value||'',pw2=$('#lg-pw2')?.value||'';
   if(!em||!pw){toast('이메일과 비밀번호를 입력해 주세요');return}if(pw.length<6){toast('비밀번호는 6자 이상이어야 해요');return}if(pw!==pw2){toast('비밀번호가 서로 달라요. 다시 확인해 주세요');return}
@@ -955,7 +959,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.da
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'Kakao Books and YES24 are available after you verify your email. Tap I\'ve verified in Settings > Account.','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
 '가입하면 입력한 이메일로 인증 메일이 가요. 메일의 링크를 눌러야 모든 기기 동기화가 시작돼요.':'After you sign up, a verification email is sent to that address. Syncing across devices starts once you click the link.',
 '처음이면 회원가입 탭에서 가입해 주세요. Google로 가입했다면 Google로 로그인하세요.':'New here? Use the Sign up tab. If you signed up with Google, sign in with Google.',
 '이 주소로 인증 메일을 보냈어요. 메일의 링크를 누른 뒤 ':'We sent a verification email to this address. Click the link in it, then tap ','인증 완료':'I\'ve verified','를 눌러 주세요. 메일이 안 보이면 스팸함도 확인해 주세요. 인증 전에는 이 기기에만 저장돼요.':'. If you cannot find it, check your spam folder. Until then, your data stays on this device only.',
@@ -1232,7 +1236,7 @@ function vSettings(){return `<header class="top"><div><h1>설정</h1></div></hea
   ${dangerHTML()}
   <div class="sec" id="sec-search"><h2>책 검색</h2>
     ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${PROXIED[k]&&!proxyOn()?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>`).join('')}
-    ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?'카카오 책과 예스24는 로그인하면 쓸 수 있어요.':'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
+    ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?(S.user&&S.user.unverified?'카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'카카오 책과 예스24는 로그인하면 쓸 수 있어요.'):'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
   <div class="sec"><h2>저장 위치</h2><p style="margin:0;font-size:14px">${S.syncMsg||''}</p></div>
   <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p><p style="margin:4px 0 0;font-size:14px">연락처 <a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a></p><p style="margin:8px 0 0"><button class="linkbtn" data-action="privacy">개인정보 처리방침</button></p></div>`}
 let lastMain='';
