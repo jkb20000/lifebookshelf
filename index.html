@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b108">
+<link rel="manifest" href="manifest.webmanifest?b109">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b108">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b108">
+<link rel="apple-touch-icon" href="icon-180.png?b109">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b109">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -652,6 +652,12 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 .dedit input[type=date]{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:8px;padding:4px 8px;font-size:13px;font-family:var(--sans)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}.drawer{transition:transform .2s ease,visibility 0s linear .2s!important}.drawer.open{transition:transform .2s ease,visibility 0s!important}.dback{transition:opacity .2s!important}}
 
+/* update bar and what's new */
+#updbar{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,140%);z-index:40;display:flex;align-items:center;gap:8px;max-width:min(440px,calc(100% - 24px));width:max-content;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:14px;transition:transform .25s ease;opacity:0}
+#updbar.show{transform:translate(-50%,0);opacity:1}#updbar span{flex:1;min-width:0}
+.wnew{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:20px}.wnew.show{display:flex}
+.wcard{background:var(--surface);color:var(--ink);border-radius:18px;padding:20px 20px 14px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25)}.wcard h3{margin:0 0 2px;font-size:18px}.wcard ul{margin:10px 0;padding-left:18px;line-height:1.6}.wcard .hbtns{justify-content:flex-end}
+@media (min-width:1024px){#updbar{bottom:96px}}
 /* ---------- responsive: folded phones, phones, foldables and tablets, laptops, large monitors ---------- */
 @media (max-width:360px){
   .ccard .a{flex-wrap:wrap;white-space:normal}.ccard .a .au{white-space:nowrap}
@@ -715,7 +721,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.8.0',APP_BUILD_NO=108,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.9.0',APP_BUILD_NO=109,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -959,7 +965,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.da
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'Kakao Books and YES24 are available after you verify your email. Tap I\'ve verified in Settings > Account.','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','이번 버전에서 바뀐 점':'What\'s new in this version','업데이트 확인':'Check for updates','지금 업데이트':'Update now','최신 버전이에요':'You have the latest version','업데이트하는 중이에요':'Updating','입력하던 화면을 닫은 뒤 업데이트해 주세요':'Close the screen you are editing, then update','이 버전의 변경 내용을 불러오지 못했어요.':'Could not load the changes for this version.','확인했어요':'Got it','나중에':'Later','카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'Kakao Books and YES24 are available after you verify your email. Tap I\'ve verified in Settings > Account.','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
 '가입하면 입력한 이메일로 인증 메일이 가요. 메일의 링크를 눌러야 모든 기기 동기화가 시작돼요.':'After you sign up, a verification email is sent to that address. Syncing across devices starts once you click the link.',
 '처음이면 회원가입 탭에서 가입해 주세요. Google로 가입했다면 Google로 로그인하세요.':'New here? Use the Sign up tab. If you signed up with Google, sign in with Google.',
 '이 주소로 인증 메일을 보냈어요. 메일의 링크를 누른 뒤 ':'We sent a verification email to this address. Click the link in it, then tap ','인증 완료':'I\'ve verified','를 눌러 주세요. 메일이 안 보이면 스팸함도 확인해 주세요. 인증 전에는 이 기기에만 저장돼요.':'. If you cannot find it, check your spam folder. Until then, your data stays on this device only.',
@@ -1238,7 +1244,7 @@ function vSettings(){return `<header class="top"><div><h1>설정</h1></div></hea
     ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${PROXIED[k]&&!proxyOn()?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>`).join('')}
     ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?(S.user&&S.user.unverified?'카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'카카오 책과 예스24는 로그인하면 쓸 수 있어요.'):'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p></div>
   <div class="sec"><h2>저장 위치</h2><p style="margin:0;font-size:14px">${S.syncMsg||''}</p></div>
-  <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p><p style="margin:4px 0 0;font-size:14px">연락처 <a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a></p><p style="margin:8px 0 0"><button class="linkbtn" data-action="privacy">개인정보 처리방침</button></p></div>`}
+  <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p><p style="margin:4px 0 0;font-size:14px">연락처 <a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a></p><p style="margin:8px 0 0;display:flex;gap:14px;flex-wrap:wrap"><button class="linkbtn" data-action="whatsnew">이번 버전에서 바뀐 점</button><button class="linkbtn" data-action="checkupd">업데이트 확인</button><button class="linkbtn" data-action="privacy">개인정보 처리방침</button></p></div>`}
 let lastMain='';
 /* ---------- app bar & drawer ---------- */
 const IC={menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',back:'<path d="M15 5l-7 7 7 7"/>',shelf:'<path d="M4 4v16M8 6v14M12 4v16M16.5 5.5l3.5 14"/><path d="M2 20.5h20"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
@@ -1646,6 +1652,11 @@ document.addEventListener('click',e=>{
     case 'fstatus':S.form.status=t.dataset.s;renderForm();break;
     case 'fcolor':S.form.color=t.dataset.c;renderForm();break;
     case 'privacy':openPrivacy();break;
+    case 'updnow':applyUpdate();break;
+    case 'updlater':$('#updbar')?.classList.remove('show');break;
+    case 'whatsnew':whatsNew();break;
+    case 'checkupd':checkUpdate(true);break;
+    case 'wnewclose':$('#wnew')?.classList.remove('show');break;
     case 'pvclose':closePrivacy();break;
     case 'fcancel':closeForm();break;
     case 'fsave':saveForm();break;
@@ -2053,7 +2064,32 @@ document.addEventListener('drop',e=>{document.body.classList.remove('mbs-drop');
 window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:add')return;const r=mbsTakeBooks(e.data.books);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
 Object.assign(EN_STR,{'이미 서재에 있는 책이에요':'Already on your shelf','복사할 책이 없어요':'Nothing to copy'});
 EN_RX.unshift([/(\d+)권을 서재에 복사했어요/g,'Copied $1 books to your shelf'],[/ \(이미 있는 (\d+)권은 건너뜀\)/g,' ($1 already there, skipped)']);
+/* ---------- update notice (1.9.0): version.json next to index.html tells which build is on the server ----------
+   checks on start, when the app comes back to the front (at most every 30 min) and every hour; never reloads by itself */
+const UPD_URL='./version.json',UPD_EVERY=30*60e3,SEEN_KEY='mbs-seen-build';let updLast=0;
+const updOk=()=>location.protocol==='https:'&&'serviceWorker' in navigator;
+async function checkUpdate(force){if(!updOk()||(!force&&Date.now()-updLast<UPD_EVERY))return;updLast=Date.now();
+  try{const r=await fetch(UPD_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+    if(+j.build>APP_BUILD_NO){S.upd=j;showUpdBar()}else if(force)toast('최신 버전이에요')}catch(e){}}
+function showUpdBar(){const j=S.upd;if(!j)return;let el=$('#updbar');if(!el){el=document.createElement('div');el.id='updbar';el.setAttribute('role','status');document.body.appendChild(el)}
+  el.innerHTML=tr(`<span>${lang()==='en'?`Version <b>${esc(j.version)}</b> is available`:`새 버전 <b>${esc(j.version)}</b>이 나왔어요`}</span><button class="btn small" data-action="updnow">지금 업데이트</button><button class="iconbtn" data-action="updlater" aria-label="나중에">✕</button>`);el.classList.add('show')}
+async function applyUpdate(){if(S.form||$('#sheet.open')){toast('입력하던 화면을 닫은 뒤 업데이트해 주세요');return}
+  $('#updbar')?.classList.remove('show');toast('업데이트하는 중이에요');
+  try{const reg=await navigator.serviceWorker.getRegistration();if(reg)await Promise.race([reg.update(),new Promise(r=>setTimeout(r,4000))])}catch(e){}
+  location.reload()}
+/* what's new: shown once after the app moves to a newer build, and from Settings > About */
+async function whatsNew(){let j=null;try{const r=await fetch(UPD_URL+'?t='+Date.now(),{cache:'no-store'});if(r.ok)j=await r.json()}catch(e){}
+  const notes=j&&+j.build===APP_BUILD_NO?(j.notes&&(j.notes[lang()==='en'?'en':'ko']||j.notes.ko))||[]:[];
+  let el=$('#wnew');if(!el){el=document.createElement('div');el.id='wnew';el.className='wnew';document.body.appendChild(el)}
+  el.innerHTML=tr(`<div class="wcard" role="dialog" aria-modal="true"><h3>이번 버전에서 바뀐 점</h3><p class="hint">${esc(APP_VERSION)} (빌드 ${APP_BUILD_NO})</p>
+    ${notes.length?`<ul>${notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:'<p>이 버전의 변경 내용을 불러오지 못했어요.</p>'}
+    <div class="hbtns"><button class="btn small" data-action="wnewclose">확인했어요</button></div></div>`);el.classList.add('show')}
+function initUpdates(){if(!updOk())return;let seen=0;try{seen=+localStorage.getItem(SEEN_KEY)||0;localStorage.setItem(SEEN_KEY,String(APP_BUILD_NO))}catch(e){}
+  if(seen&&seen<APP_BUILD_NO)setTimeout(whatsNew,1200);
+  setTimeout(()=>checkUpdate(),3000);setInterval(()=>checkUpdate(),60*60e3);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()})}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+initUpdates();
 loadLocal();loadTimer();applySkin();migrateCats();renderAll();initCloud();
 </script>
 </body>
