@@ -1,16 +1,16 @@
 {
-  "version": "1.9.0",
-  "build": 109,
+  "version": "1.10.0",
+  "build": 110,
   "notes": {
     "ko": [
-      "새 버전이 나오면 화면 아래에 알려 드려요. '지금 업데이트'를 누르면 앱을 다시 열지 않아도 바로 바뀌어요.",
-      "업데이트 뒤에는 이렇게 바뀐 점을 한 번 보여 드려요.",
-      "설정 > 앱 정보에서 '이번 버전에서 바뀐 점'과 '업데이트 확인'을 언제든 누를 수 있어요."
+      "읽는 중인 책의 진도 막대나 쪽수를 누르면, 막대를 끌어 읽은 곳을 쪽수와 퍼센트로 맞출 수 있어요.",
+      "전체 쪽수를 모르는 책은 퍼센트로 기록하고, 쪽수를 넣으면 쪽 단위로 바뀌어요.",
+      "설정 > 책 검색의 '쪽수 한꺼번에 채우기'로 쪽수가 없는 책을 ISBN으로 한 번에 찾아 채울 수 있어요."
     ],
     "en": [
-      "When a new version is out, a notice appears at the bottom. Tap 'Update now' to switch without reopening the app.",
-      "After an update, you see what changed, like this.",
-      "You can open 'What's new' and 'Check for updates' anytime in Settings > About."
+      "Tap the progress bar or page numbers on a book you are reading, then drag to set where you stopped, in pages and percent.",
+      "Books without a page count are tracked in percent and switch to pages once you add the count.",
+      "Use 'Fill in page counts' in Settings > Book search to look up missing page counts by ISBN all at once."
     ]
   }
 }
