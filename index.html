@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b112">
+<link rel="manifest" href="manifest.webmanifest?b114">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b112">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b112">
+<link rel="apple-touch-icon" href="icon-180.png?b114">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b114">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -725,7 +725,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.11.1',APP_BUILD_NO=112,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.12.1',APP_BUILD_NO=114,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -971,7 +971,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('lifebookshelf.
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','어디까지 읽었는지 막대를 끌어 맞춰 주세요':'Drag the bar to where you stopped reading','끝까지':'To the end','전체 쪽수를 모르면 퍼센트로 기록돼요. 쪽수를 넣으면 쪽 단위로 바뀌어요.':'Without a page count, progress is kept as a percent. Add the page count to switch to pages.','전체 쪽수':'Total pages','쪽수 찾기':'Find pages','전체 쪽수를 모르면 퍼센트로 기록돼요. ':'Without a page count, progress is kept as a percent. ','쪽수 넣기':'Add page count','쪽수 모름':'Pages unknown','진도 조정':'Adjust progress','전체 쪽수를 입력해 주세요':'Please enter the total pages','쪽수를 찾지 못했어요. 직접 입력해 주세요':'Page count not found. Please enter it',
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','표지 선명하게 바꾸기':'Sharpen covers','바꾼 표지 되돌리기':'Undo cover changes','예스24 큰 표지를 먼저 찾고, 없으면 Open Library 큰 표지를 써요. 끝난 뒤 한 번에 되돌릴 수 있어요.':'Looks for the large YES24 cover first, then the large Open Library cover. You can undo all changes at the end.','직접 올린 표지도 바꾸기':'Also replace covers I uploaded','어디까지 읽었는지 막대를 끌어 맞춰 주세요':'Drag the bar to where you stopped reading','끝까지':'To the end','전체 쪽수를 모르면 퍼센트로 기록돼요. 쪽수를 넣으면 쪽 단위로 바뀌어요.':'Without a page count, progress is kept as a percent. Add the page count to switch to pages.','전체 쪽수':'Total pages','쪽수 찾기':'Find pages','전체 쪽수를 모르면 퍼센트로 기록돼요. ':'Without a page count, progress is kept as a percent. ','쪽수 넣기':'Add page count','쪽수 모름':'Pages unknown','진도 조정':'Adjust progress','전체 쪽수를 입력해 주세요':'Please enter the total pages','쪽수를 찾지 못했어요. 직접 입력해 주세요':'Page count not found. Please enter it',
 '쪽수 한꺼번에 채우기':'Fill in page counts','찾기 시작':'Start','멈추기':'Stop','다 끝났어요.':'All done.','중간에 멈췄어요. 다시 시작하면 남은 책부터 찾아요.':'Stopped. Start again to continue with the rest.',
 '예스24, Google Books, Open Library 순서로 ISBN을 찾아요. ISBN이 없는 ':'Looks up each ISBN on YES24, Google Books, then Open Library. The ','권은 책 화면에서 직접 넣거나 ISBN을 추가해 주세요. 진도를 퍼센트로 기록한 책은 쪽수가 채워지면 쪽 단위로 바뀌어요.':' books without an ISBN need the page count or ISBN added on their own screen. Books tracked in percent switch to pages once filled.',
 '오늘 예스24 조회 한도를 다 써서 나머지는 Google과 Open Library에서만 찾았어요. 내일 다시 하면 예스24에서 더 찾을 수 있어요.':'Today\'s YES24 limit was reached, so the rest were checked on Google and Open Library only. Try again tomorrow to find more on YES24.','이번 버전에서 바뀐 점':'What\'s new in this version','업데이트 확인':'Check for updates','지금 업데이트':'Update now','최신 버전이에요':'You have the latest version','업데이트하는 중이에요':'Updating','입력하던 화면을 닫은 뒤 업데이트해 주세요':'Close the screen you are editing, then update','이 버전의 변경 내용을 불러오지 못했어요.':'Could not load the changes for this version.','확인했어요':'Got it','나중에':'Later','카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'Kakao Books and YES24 are available after you verify your email. Tap I\'ve verified in Settings > Account.','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
@@ -1251,7 +1251,7 @@ function vSettings(){return `<header class="top"><div><h1>설정</h1></div></hea
   ${dangerHTML()}
   <div class="sec" id="sec-search"><h2>책 검색</h2>
     ${[['kakao','국내 판본, 국내 표지','api'],['yes24','국내 책, 쪽수와 책 소개','api'],['google','해외 책, 쪽수와 설명','api'],['naver','검색어 링크와 책별 네이버 책 링크를 함께 켜고 꺼요','lnk']].map(([k,d,t])=>`<label class="toggle srct"><input type="checkbox" data-action="srctoggle" data-k="${k}" ${srcOn(k)?'checked':''} ${PROXIED[k]&&!proxyOn()?'disabled':''}><span><b>${SEARCH_SRC[k]}<i class="tag ${t}">${t==='api'?'API':'링크'}</i></b><small>${d}</small></span></label>`).join('')}
-    ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?(S.user&&S.user.unverified?'카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'카카오 책과 예스24는 로그인하면 쓸 수 있어요.'):'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p>${(n=>n?`<div class="bulkrow"><span>${lang()==='en'?`Books without page count: <b>${n}</b>`:`쪽수가 없는 책 <b>${n}</b>권`}</span><button class="btn ghost small" data-action="bulkopen">쪽수 한꺼번에 채우기</button></div>`:'')(needPages().length)}</div>
+    ${proxyOn()?'':`<p class="hint" style="color:var(--accent)">${typeof FB!=='undefined'&&FB?(S.user&&S.user.unverified?'카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'카카오 책과 예스24는 로그인하면 쓸 수 있어요.'):'카카오 책과 예스24는 로그인한 웹앱에서 쓸 수 있어요.'}</p>`}<p class="hint"><b>API</b> 앱이 직접 검색해 결과와 표지, 쪽수, ISBN을 채워요. <b>링크</b> 앱에서 직접 검색할 수 없어서, 누르면 그 사이트의 검색 결과가 열려요. 켜 둔 API는 동시에 검색하고, 한글로 찾으면 카카오, 영문으로 찾으면 Google 결과가 먼저 나와요.</p>${(n=>n?`<div class="bulkrow"><span>${lang()==='en'?`Books without page count: <b>${n}</b>`:`쪽수가 없는 책 <b>${n}</b>권`}</span><button class="btn ghost small" data-action="bulkopen" data-v="pages">쪽수 한꺼번에 채우기</button></div>`:'')(needPages().length)}${(n=>n?`<div class="bulkrow"><span>${lang()==='en'?`Books with a small cover: <b>${n}</b>`:`표지가 작은 책 <b>${n}</b>권`}</span><button class="btn ghost small" data-action="bulkopen" data-v="covers">표지 선명하게 바꾸기</button></div>`:'')(needCovers().length)}</div>
   <div class="sec"><h2>저장 위치</h2><p style="margin:0;font-size:14px">${S.syncMsg||''}</p></div>
   <div class="sec"><h2>앱 정보</h2><p style="margin:0;font-size:14px">버전 <b>${APP_VERSION}</b> · 빌드 ${APP_BUILD_NO} · ${APP_BUILD}</p><p style="margin:4px 0 0;font-size:14px">개발자 <b>${APP_DEV}</b></p><p style="margin:4px 0 0;font-size:14px">연락처 <a href="mailto:${APP_CONTACT}">${APP_CONTACT}</a></p><p style="margin:8px 0 0;display:flex;gap:14px;flex-wrap:wrap"><button class="linkbtn" data-action="whatsnew">이번 버전에서 바뀐 점</button><button class="linkbtn" data-action="checkupd">업데이트 확인</button><button class="linkbtn" data-action="privacy">개인정보 처리방침</button></p></div>`}
 let lastMain='';
@@ -1417,17 +1417,17 @@ async function searchYes24(q,bulk){const j=await bookApi('yes24',q,false,bulk);i
 async function searchKakao(q,isIsbn){const j=await bookApi('kakao',q,isIsbn);if(!j)return [];
     return (j.documents||[]).map(d=>{const ids=String(d.isbn||'').split(/\s+/).filter(Boolean);const isbn=ids.find(x=>x.length===13&&isbnOk(x))||ids.find(x=>isbnOk(x))||'';
       return {title:d.title||'',author:(d.authors||[]).join(', '),translator:(d.translators||[]).join(', '),publisher:d.publisher||'',year:(d.datetime||'').slice(0,4),pages:0,isbn,
-        cover:httpsify(d.thumbnail||'')||(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`:''),source:'카카오 책',link:httpsify(d.url||'')}}).filter(r=>r.title)}
+        cover:httpsify(d.thumbnail||'')||(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`:''),source:'카카오 책',link:httpsify(d.url||'')}}).filter(r=>r.title)}
 async function searchGoogle(q,lang){const j=await fetchJSON('https://www.googleapis.com/books/v1/volumes?q='+encodeURIComponent(q)+'&maxResults=10&printType=books'+(lang?'&langRestrict='+lang:''));
   return (j.items||[]).map(it=>{const v=it.volumeInfo||{};const ids=v.industryIdentifiers||[];const i13=(ids.find(x=>x.type==='ISBN_13')||{}).identifier||'';const i10=(ids.find(x=>x.type==='ISBN_10')||{}).identifier||'';
     const isbn=isbnOk(i13)?i13:(isbnOk(i10)?i10:'');const il=v.imageLinks||{};
     return {title:v.subtitle?`${v.title} (${v.subtitle})`:(v.title||''),author:(v.authors||[]).join(', '),publisher:v.publisher||'',year:(v.publishedDate||'').slice(0,4),pages:+v.pageCount||0,isbn,
-      cover:httpsify(il.thumbnail||il.smallThumbnail||'')||(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`:''),source:'Google Books',link:httpsify(v.infoLink||'')}}).filter(r=>r.title)}
+      cover:httpsify(il.thumbnail||il.smallThumbnail||'')||(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`:''),source:'Google Books',link:httpsify(v.infoLink||'')}}).filter(r=>r.title)}
 async function searchOpenLib(q,isIsbn){const url=isIsbn?`https://openlibrary.org/search.json?isbn=${encodeURIComponent(q)}&limit=5`:`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=8&fields=title,subtitle,author_name,publisher,first_publish_year,number_of_pages_median,isbn,cover_i,key`;
   const j=await fetchJSON(url);return (j.docs||[]).map(d=>{const isbn=(d.isbn||[]).find(x=>x.length===13&&isbnOk(x))||(d.isbn||[]).find(x=>isbnOk(x))||'';
     return {title:d.subtitle?`${d.title} (${d.subtitle})`:(d.title||''),author:(d.author_name||[]).slice(0,3).join(', '),publisher:(d.publisher||[])[0]||'',year:d.first_publish_year?String(d.first_publish_year):'',pages:+d.number_of_pages_median||0,isbn,
-      cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`:''),source:'Open Library',link:d.key?'https://openlibrary.org'+d.key:''}}).filter(r=>r.title)}
-function mergeRes(a,b){const key=r=>r.isbn||nrm(r.title)+'|'+nrm(r.author);const seen=new Map(a.map(r=>[key(r),r]));return a.concat(b.filter(r=>{const k=key(r),o=seen.get(k);if(o){if(r.pages&&(!o.pages||r.source==='예스24'))o.pages=r.pages;if(!o.cover&&r.cover)o.cover=r.cover;return false}seen.set(k,r);return true}))}
+      cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-L.jpg`:(isbn?`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`:''),source:'Open Library',link:d.key?'https://openlibrary.org'+d.key:''}}).filter(r=>r.title)}
+function mergeRes(a,b){const key=r=>r.isbn?isbn13(r.isbn):nrm(r.title)+'|'+nrm(r.author);const seen=new Map(a.map(r=>[key(r),r]));return a.concat(b.filter(r=>{const k=key(r),o=seen.get(k);if(o){if(r.pages&&(!o.pages||r.source==='예스24'))o.pages=r.pages;if(r.cover&&coverRank(r.cover)>coverRank(o.cover))o.cover=r.cover;return false}seen.set(k,r);return true}))}
 async function claudeSearch(q){const cats=[...new Set(list().map(b=>b.category).filter(Boolean))];
   const j=await sample.json(`사용자가 독서 앱에 책을 추가하려고 검색합니다. 검색어: "${q}"
 실제로 존재한다고 확신하는 책만 최대 5권 골라 JSON 배열로만 답하세요. 각 항목: {"title":"정식 제목(부제 제외)","author":"저자","publisher":"출판사 또는 null","year":출판연도 숫자 또는 null,"pages":확신할 때만 쪽수 숫자 아니면 null}.
@@ -1459,32 +1459,47 @@ function pdSave(){const d=S.pd,b=d&&S.books[d.id];if(!b)return;
   putBook(b);closeDlg();renderAll()}
 document.addEventListener('input',e=>{if(e.target.id==='pdrange')pdSync(+e.target.value)});
 
-/* ---------- fill missing page counts for the whole shelf ---------- */
+/* ---------- fill missing page counts / sharpen covers for the whole shelf ---------- */
+/* ISBN-10 and ISBN-13 of the same book compare equal */
+function isbn13(v){v=cleanIsbn(v).toUpperCase();if(v.length!==10)return v;const b='978'+v.slice(0,9);let s=0;for(let i=0;i<12;i++)s+=(+b[i])*(i%2?3:1);return b+((10-s%10)%10)}
+const isbnEq=(a,b)=>!!a&&!!b&&isbn13(a)===isbn13(b);
+/* rough cover quality: YES24 L > Open Library L > other > Google / Open Library M > Kakao thumbnail; uploaded covers are never replaced */
+function coverRank(u){u=String(u||'');if(!u)return 0;if(/firebasestorage|^data:/.test(u))return 9;if(/image\.yes24\.com/.test(u))return 5;if(/openlibrary\.org.*-L\.jpg/.test(u))return 4;if(/books\.google|openlibrary\.org/.test(u))return 2;if(/kakaocdn|daumcdn/.test(u))return 1;return 3}
 const needPages=()=>Object.values(S.books).filter(b=>!b.pages);
-async function lookupPages(isbn){let n=0;
-  if(srcOn('yes24')){try{const y=await searchYes24(isbn,true);n=(y.find(r=>r.isbn===isbn&&r.pages)||{}).pages||0}catch(e){if(e&&e.code==='functions/resource-exhausted')S.bulk&&(S.bulk.quota=true);else logError('bulk-yes24',e.message)}}
-  if(!n){for(let t=0;t<2&&!n;t++){try{const g=await searchGoogle('isbn:'+isbn);n=(g.find(r=>r.pages)||{}).pages||0;break}catch(e){if(/429/.test(e.message)&&t===0){await new Promise(r=>setTimeout(r,4000))}else break}}}
-  if(!n){try{const o=await searchOpenLib(isbn,true);n=(o.find(r=>r.pages)||{}).pages||0}catch(e){}}
-  return n}
-function bulkHTML(){const k=S.bulk,list=needPages(),withIsbn=list.filter(b=>b.isbn).length;
-  if(!k)return `<div class="wcard" role="dialog" aria-modal="true"><h3>쪽수 한꺼번에 채우기</h3><p>${lang()==='en'?`<b>${list.length}</b> books have no page count. The <b>${withIsbn}</b> with an ISBN will be looked up.`:`쪽수가 없는 책 <b>${list.length}권</b> 중 ISBN이 있는 <b>${withIsbn}권</b>을 찾아볼게요.`}</p>
-    <p class="hint">예스24, Google Books, Open Library 순서로 ISBN을 찾아요. ISBN이 없는 ${list.length-withIsbn}권은 책 화면에서 직접 넣거나 ISBN을 추가해 주세요. 진도를 퍼센트로 기록한 책은 쪽수가 채워지면 쪽 단위로 바뀌어요.</p>
+/* covers you uploaded are included too unless that option is turned off in the dialog */
+const upOn=()=>S.bulkUp!==false;
+const needCovers=()=>Object.values(S.books).filter(b=>{const r=coverRank(b.cover);return r<=2||(r===9&&upOn())});
+/* an image is usable when it loads and is at least 200px wide (filters out tiny placeholders) */
+function imgOk(u){return new Promise(res=>{if(!u)return res(false);const i=new Image();const t=setTimeout(()=>res(false),8000);i.onload=()=>{clearTimeout(t);res(i.naturalWidth>=200)};i.onerror=()=>{clearTimeout(t);res(false)};i.src=u})}
+async function lookupBook(isbn,want){const out={pages:0,cover:''};const i13=isbn13(isbn);
+  if(srcOn('yes24')){try{const y=await searchYes24(i13,true);const hit=y.find(r=>isbnEq(r.isbn,isbn));if(hit){out.pages=hit.pages||0;out.cover=hit.cover||''}}catch(e){if(e&&e.code==='functions/resource-exhausted')S.bulk&&(S.bulk.quota=true);else logError('bulk-yes24',e.message)}}
+  if(want==='pages'&&!out.pages){for(let t=0;t<2&&!out.pages;t++){try{const g=await searchGoogle('isbn:'+isbn);out.pages=(g.find(r=>r.pages)||{}).pages||0;break}catch(e){if(/429/.test(e.message)&&t===0){await new Promise(r=>setTimeout(r,4000))}else break}}}
+  if(want==='pages'&&!out.pages){try{const o=await searchOpenLib(isbn,true);out.pages=(o.find(r=>r.pages)||{}).pages||0}catch(e){}}
+  if(want==='covers'){if(out.cover&&!(await imgOk(out.cover)))out.cover='';if(!out.cover){const ol=`https://covers.openlibrary.org/b/isbn/${i13}-L.jpg?default=false`;if(await imgOk(ol))out.cover=ol}}
+  return out}
+async function lookupPages(isbn){return (await lookupBook(isbn,'pages')).pages}
+const BULK={pages:{title:'쪽수 한꺼번에 채우기',list:needPages},covers:{title:'표지 선명하게 바꾸기',list:needCovers}};
+function bulkHTML(){const k=S.bulk,mode=S.bulkMode||'pages',M=BULK[mode],list=M.list(),withIsbn=list.filter(b=>b.isbn).length,en=lang()==='en';
+  if(!k)return `<div class="wcard" role="dialog" aria-modal="true"><h3>${M.title}</h3><p>${mode==='pages'?(en?`<b>${list.length}</b> books have no page count. The <b>${withIsbn}</b> with an ISBN will be looked up.`:`쪽수가 없는 책 <b>${list.length}권</b> 중 ISBN이 있는 <b>${withIsbn}권</b>을 찾아볼게요.`):(en?`<b>${list.length}</b> books have a small or missing cover. The <b>${withIsbn}</b> with an ISBN will be looked up.`:`표지가 작거나 없는 책 <b>${list.length}권</b> 중 ISBN이 있는 <b>${withIsbn}권</b>을 찾아볼게요.`)}</p>
+    <p class="hint">${mode==='pages'?`예스24, Google Books, Open Library 순서로 ISBN을 찾아요. ISBN이 없는 ${list.length-withIsbn}권은 책 화면에서 직접 넣거나 ISBN을 추가해 주세요. 진도를 퍼센트로 기록한 책은 쪽수가 채워지면 쪽 단위로 바뀌어요.`:'예스24 큰 표지를 먼저 찾고, 없으면 Open Library 큰 표지를 써요. 끝난 뒤 한 번에 되돌릴 수 있어요.'}</p>${mode==='covers'?`<label class="toggle" style="margin:4px 0 8px"><input type="checkbox" data-action="bulkup" ${upOn()?'checked':''}><span>직접 올린 표지도 바꾸기</span></label>`:''}
     <div class="hbtns"><button class="btn ghost small" data-action="pdclose">닫기</button><button class="btn small" data-action="bulkgo" ${withIsbn?'':'disabled'}>찾기 시작</button></div></div>`;
   const pc=k.total?Math.round(k.i/k.total*100):100;
-  return `<div class="wcard" role="dialog" aria-modal="true"><h3>쪽수 한꺼번에 채우기</h3><div class="bar" style="--c:var(--accent)"><i style="width:${pc}%"></i></div>
-    <p>${lang()==='en'?`<b>${k.i} / ${k.total}</b> checked · found <b>${k.found}</b> · not found <b>${k.miss}</b>`:`<b>${k.i} / ${k.total}</b>권 확인 · 찾음 <b>${k.found}</b> · 못 찾음 <b>${k.miss}</b>`}</p>
+  return `<div class="wcard" role="dialog" aria-modal="true"><h3>${M.title}</h3><div class="bar" style="--c:var(--accent)"><i style="width:${pc}%"></i></div>
+    <p>${en?`<b>${k.i} / ${k.total}</b> checked · ${mode==='pages'?'found':'updated'} <b>${k.found}</b> · not found <b>${k.miss}</b>`:`<b>${k.i} / ${k.total}</b>권 확인 · ${mode==='pages'?'찾음':'바꿈'} <b>${k.found}</b> · 못 찾음 <b>${k.miss}</b>`}</p>
     ${k.quota?'<p class="hint">오늘 예스24 조회 한도를 다 써서 나머지는 Google과 Open Library에서만 찾았어요. 내일 다시 하면 예스24에서 더 찾을 수 있어요.</p>':''}
-    ${k.done?`<p class="hint">${k.stopped?'중간에 멈췄어요. 다시 시작하면 남은 책부터 찾아요.':'다 끝났어요.'}</p><div class="hbtns"><button class="btn small" data-action="pdclose">확인</button></div>`:'<div class="hbtns"><button class="btn ghost small" data-action="bulkstop">멈추기</button></div>'}</div>`}
+    ${k.done?`<p class="hint">${k.stopped?'중간에 멈췄어요. 다시 시작하면 남은 책부터 찾아요.':'다 끝났어요.'}</p><div class="hbtns">${mode==='covers'&&k.changed&&k.changed.length?'<button class="btn ghost small" data-action="bulkundo">바꾼 표지 되돌리기</button>':''}<button class="btn small" data-action="pdclose">확인</button></div>`:'<div class="hbtns"><button class="btn ghost small" data-action="bulkstop">멈추기</button></div>'}</div>`}
 function renderBulk(){dlgEl().innerHTML=tr(bulkHTML())}
-function openBulk(){S.bulk=null;renderBulk();dlgEl().classList.add('show')}
-async function runBulk(){const list=needPages().filter(b=>b.isbn);S.bulk={i:0,total:list.length,found:0,miss:0,quota:false,stop:false,done:false};renderBulk();
-  for(const b of list){if(!S.bulk||S.bulk.stop)break;const n=await lookupPages(b.isbn).catch(()=>0);const k=S.bulk;if(!k)return;k.i++;
-    const cur=S.books[b.id];if(n&&cur&&!cur.pages){const p=cur.pctOnly;cur.pages=n;if(p!=null){cur.current=Math.round(p*n/100);delete cur.pctOnly}else if(cur.status==='done')cur.current=n;putBook(cur);k.found++}else k.miss++;
+function openBulk(mode){S.bulk=null;S.bulkMode=mode||'pages';renderBulk();dlgEl().classList.add('show')}
+async function runBulk(){const mode=S.bulkMode||'pages',list=BULK[mode].list().filter(b=>b.isbn);S.bulk={i:0,total:list.length,found:0,miss:0,quota:false,stop:false,done:false,changed:[]};renderBulk();
+  for(const b of list){if(!S.bulk||S.bulk.stop)break;const r=await lookupBook(b.isbn,mode).catch(()=>({pages:0,cover:''}));const k=S.bulk;if(!k)return;k.i++;const cur=S.books[b.id];
+    if(mode==='pages'){const n=r.pages;if(n&&cur&&!cur.pages){const p=cur.pctOnly;cur.pages=n;if(p!=null){cur.current=Math.round(p*n/100);delete cur.pctOnly}else if(cur.status==='done')cur.current=n;putBook(cur);k.found++}else k.miss++}
+    else{const cr=cur?coverRank(cur.cover):0;if(r.cover&&cur&&(coverRank(r.cover)>cr||(cr===9&&upOn()))){k.changed.push([cur.id,cur.cover||'']);cur.coverPrev=cur.cover||'';cur.cover=r.cover;putBook(cur);k.found++}else k.miss++}
     renderBulk();await new Promise(r=>setTimeout(r,700))}
   if(S.bulk){S.bulk.done=true;S.bulk.stopped=S.bulk.stop;renderBulk();renderAll()}}
+function bulkUndo(){const k=S.bulk;if(!k||!k.changed)return;for(const [id,old] of k.changed){const b=S.books[id];if(b){b.cover=old;delete b.coverPrev;putBook(b)}}toast(`표지 ${k.changed.length}개를 되돌렸어요`);k.changed=[];renderBulk();renderAll()}
 
 async function fillPages(f,isbn){f.pagesBusy=true;renderForm();let n=0;
-  if(srcOn('yes24')){try{const y=await searchYes24(isbn);n=(y.find(r=>r.isbn===isbn&&r.pages)||y.find(r=>r.pages)||{}).pages||0}catch(e){logError('pages-yes24',e.message)}}
+  if(srcOn('yes24')){try{const y=await searchYes24(isbn);n=(y.find(r=>isbnEq(r.isbn,isbn)&&r.pages)||y.find(r=>r.pages)||{}).pages||0}catch(e){logError('pages-yes24',e.message)}}
   if(!n){try{const g=await searchGoogle('isbn:'+isbn);n=(g.find(r=>r.pages)||{}).pages||0}catch(e){logError('pages-google',e.message)}}
   if(!n){try{const o=await searchOpenLib(isbn,true);n=(o.find(r=>r.pages)||{}).pages||0}catch(e){logError('pages-openlib',e.message)}}
   if(S.form!==f)return;f.pagesBusy=false;f.pagesMiss=!n;if(n&&!f.pages){f.pages=n;f.pagesAuto=true}renderForm()}
@@ -1713,7 +1728,9 @@ document.addEventListener('click',e=>{
     case 'pdclose':if(S.bulk&&!S.bulk.done){S.bulk.stop=true}closeDlg();break;
     case 'pdtotal':{const b=S.pd&&S.books[S.pd.id];const n=parseInt(($('#pdtotal')||{}).value)||0;if(b&&n>0)pdSetPages(b,n);else toast('전체 쪽수를 입력해 주세요');break}
     case 'pdfind':{const b=S.pd&&S.books[S.pd.id];if(!b)break;t.disabled=true;lookupPages(b.isbn).then(n=>{if(n)pdSetPages(b,n);else{toast('쪽수를 찾지 못했어요. 직접 입력해 주세요');t.disabled=false}});break}
-    case 'bulkopen':openBulk();break;
+    case 'bulkopen':openBulk(t.dataset.v);break;
+    case 'bulkundo':bulkUndo();break;
+    case 'bulkup':S.bulkUp=t.checked;renderBulk();break;
     case 'bulkgo':runBulk();break;
     case 'bulkstop':if(S.bulk)S.bulk.stop=true;break;
     case 'updnow':applyUpdate();break;

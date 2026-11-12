@@ -1,16 +1,16 @@
 {
-  "version": "1.11.1",
-  "build": 112,
+  "version": "1.12.1",
+  "build": 114,
   "notes": {
     "ko": [
-      "Google 계정이 연결된 이메일 계정에서 카카오와 예스24 검색이 안 되던 문제를 고쳤어요.",
-      "문제 해결 기록에 오류가 난 곳(예: search-google)과 시간을 함께 보여 줘요.",
-      "쪽수 한꺼번에 채우기가 Google 조회 한도에 덜 걸리도록 천천히 진행하고, 막히면 잠시 뒤 다시 시도해요."
+      "ISBN이 10자리로 저장된 책도 예스24에서 쪽수를 찾을 수 있게 고쳤어요. '쪽수 한꺼번에 채우기'를 다시 해 보세요.",
+      "같은 책이 여러 곳에서 검색되면 더 선명한 표지(예스24 큰 표지 우선)를 골라요.",
+      "설정 > 책 검색의 '표지 선명하게 바꾸기'로 작은 표지를 큰 표지로 한 번에 바꿀 수 있어요. 직접 올린 표지도 바꿀 수 있고(끌 수 있음), 끝난 뒤 되돌릴 수도 있어요."
     ],
     "en": [
-      "Fixed Kakao and YES24 search not working for email accounts linked to Google.",
-      "Troubleshooting now shows where each error came from (such as search-google) and the time.",
-      "Fill in page counts now runs more slowly to avoid Google's rate limit, and retries after a short pause when blocked."
+      "Books saved with a 10-digit ISBN can now get their page count from YES24. Try 'Fill in page counts' again.",
+      "When a book is found in several places, the sharper cover is chosen (YES24 large cover first).",
+      "Use 'Sharpen covers' in Settings > Book search to replace small covers with large ones at once. Covers you uploaded can be included (optional), and you can undo it afterwards."
     ]
   }
 }
