@@ -1,16 +1,16 @@
 {
-  "version": "1.11.0",
-  "build": 111,
+  "version": "1.11.1",
+  "build": 112,
   "notes": {
     "ko": [
-      "앱 이름이 LifeBookshelf로 바뀌었어요. 기록과 계정, 설정은 그대로예요.",
-      "홈 화면에 추가한 앱은 아이콘 아래 이름이 바로 바뀌지 않을 수 있어요. 새 이름으로 보려면 홈 화면에서 지우고 다시 추가해 주세요.",
-      "예전 MyBookShelf 백업 파일도 그대로 가져올 수 있어요."
+      "Google 계정이 연결된 이메일 계정에서 카카오와 예스24 검색이 안 되던 문제를 고쳤어요.",
+      "문제 해결 기록에 오류가 난 곳(예: search-google)과 시간을 함께 보여 줘요.",
+      "쪽수 한꺼번에 채우기가 Google 조회 한도에 덜 걸리도록 천천히 진행하고, 막히면 잠시 뒤 다시 시도해요."
     ],
     "en": [
-      "The app is now called LifeBookshelf. Your records, account and settings stay the same.",
-      "The name under the home screen icon may not change right away. Remove it and add it to the home screen again to see the new name.",
-      "Backup files from MyBookShelf can still be imported."
+      "Fixed Kakao and YES24 search not working for email accounts linked to Google.",
+      "Troubleshooting now shows where each error came from (such as search-google) and the time.",
+      "Fill in page counts now runs more slowly to avoid Google's rate limit, and retries after a short pause when blocked."
     ]
   }
 }

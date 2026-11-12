@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b111">
+<link rel="manifest" href="manifest.webmanifest?b112">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b111">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b111">
+<link rel="apple-touch-icon" href="icon-180.png?b112">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b112">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -725,7 +725,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.11.0',APP_BUILD_NO=111,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.11.1',APP_BUILD_NO=112,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -1124,7 +1124,7 @@ function dangerHTML(){return `<div class="sec danger-zone" id="sec-danger"><h2>�
   <p class="hint" style="margin:0 0 8px">모든 책, 문구, 독서 기록, 설정을 지워요. 되돌릴 수 없으니 먼저 JSON 백업을 받아 두세요.${typeof FB!=='undefined'&&FB&&S.user?' 계정도 함께 삭제돼요.':''}</p>
   ${S.delAll?`<p style="margin:0 0 6px;font-size:13px">확인을 위해 아래 칸에 <b>삭제</b>라고 입력하세요</p><div class="hbtns"><input type="text" id="delconfirm" autocomplete="off" style="flex:1;border:1px solid var(--danger);background:var(--surface-2);border-radius:8px;padding:8px 10px"><button class="btn act danger" data-action="delallgo"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>영구 삭제</span></button><button class="linkbtn" data-action="delallcancel">취소</button></div>`
   :`<button class="btn act danger" data-action="delall"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg><span>${typeof FB!=='undefined'&&FB&&S.user?'계정과 모든 데이터 삭제':'모든 데이터 삭제'}</span></button>`}</div>`}
-function errLogHTML(){const es=errList();if(!es.length)return'';return `<details class="sess" style="margin-top:0"><summary>최근 오류 기록 ${es.length}건</summary>${es.slice(0,10).map(e=>`<div class="srec" style="grid-template-columns:auto 1fr"><span>${ymd(new Date(e.at))}</span><span style="overflow-wrap:anywhere">${esc(e.msg)}</span></div>`).join('')}<button class="linkbtn" data-action="errclear" style="font-size:12px;margin-top:6px">기록 지우기</button></details>`}
+function errLogHTML(){const es=errList();if(!es.length)return'';return `<details class="sess" style="margin-top:0"><summary>최근 오류 기록 ${es.length}건</summary>${es.slice(0,10).map(e=>{const d=new Date(e.at);return `<div class="srec" style="grid-template-columns:auto 1fr"><span>${ymd(d)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span><span style="overflow-wrap:anywhere">${e.kind?`<b>${esc(e.kind)}</b> · `:''}${esc(e.msg)}</span></div>`}).join('')}<button class="linkbtn" data-action="errclear" style="font-size:12px;margin-top:6px">기록 지우기</button></details>`}
 
 /* ---------- timer / sessions ---------- */
 const TK='lifebookshelf.timer';
@@ -1463,7 +1463,7 @@ document.addEventListener('input',e=>{if(e.target.id==='pdrange')pdSync(+e.targe
 const needPages=()=>Object.values(S.books).filter(b=>!b.pages);
 async function lookupPages(isbn){let n=0;
   if(srcOn('yes24')){try{const y=await searchYes24(isbn,true);n=(y.find(r=>r.isbn===isbn&&r.pages)||{}).pages||0}catch(e){if(e&&e.code==='functions/resource-exhausted')S.bulk&&(S.bulk.quota=true);else logError('bulk-yes24',e.message)}}
-  if(!n){try{const g=await searchGoogle('isbn:'+isbn);n=(g.find(r=>r.pages)||{}).pages||0}catch(e){}}
+  if(!n){for(let t=0;t<2&&!n;t++){try{const g=await searchGoogle('isbn:'+isbn);n=(g.find(r=>r.pages)||{}).pages||0;break}catch(e){if(/429/.test(e.message)&&t===0){await new Promise(r=>setTimeout(r,4000))}else break}}}
   if(!n){try{const o=await searchOpenLib(isbn,true);n=(o.find(r=>r.pages)||{}).pages||0}catch(e){}}
   return n}
 function bulkHTML(){const k=S.bulk,list=needPages(),withIsbn=list.filter(b=>b.isbn).length;
@@ -1480,7 +1480,7 @@ function openBulk(){S.bulk=null;renderBulk();dlgEl().classList.add('show')}
 async function runBulk(){const list=needPages().filter(b=>b.isbn);S.bulk={i:0,total:list.length,found:0,miss:0,quota:false,stop:false,done:false};renderBulk();
   for(const b of list){if(!S.bulk||S.bulk.stop)break;const n=await lookupPages(b.isbn).catch(()=>0);const k=S.bulk;if(!k)return;k.i++;
     const cur=S.books[b.id];if(n&&cur&&!cur.pages){const p=cur.pctOnly;cur.pages=n;if(p!=null){cur.current=Math.round(p*n/100);delete cur.pctOnly}else if(cur.status==='done')cur.current=n;putBook(cur);k.found++}else k.miss++;
-    renderBulk();await new Promise(r=>setTimeout(r,250))}
+    renderBulk();await new Promise(r=>setTimeout(r,700))}
   if(S.bulk){S.bulk.done=true;S.bulk.stopped=S.bulk.stop;renderBulk();renderAll()}}
 
 async function fillPages(f,isbn){f.pagesBusy=true;renderForm();let n=0;
