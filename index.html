@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MyBookShelf</title>
-<link rel="manifest" href="manifest.webmanifest?b110">
+<title>LifeBookshelf</title>
+<link rel="manifest" href="manifest.webmanifest?b111">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="MyBookShelf">
-<link rel="apple-touch-icon" href="icon-180.png?b110">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b110">
+<meta name="apple-mobile-web-app-title" content="LifeBookshelf">
+<link rel="apple-touch-icon" href="icon-180.png?b111">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b111">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -725,7 +725,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.10.0',APP_BUILD_NO=110,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.11.0',APP_BUILD_NO=111,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -788,7 +788,9 @@ function applySkin(){if(S.settings.skin==='oak'){S.settings.skin='wood';if(S.set
   r.style.setProperty('--tw',(w>50?(w-50)/50*12:0)+'%');r.style.setProperty('--tc',(w<50?(50-w)/50*12:0)+'%')}
 
 const YEAR=new Date().getFullYear();
-const LS='mybookshelf.v1';
+/* renamed from MyBookShelf: copy this browser's old 'mybookshelf.*' keys once (the old keys are kept as a fallback) */
+try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('mybookshelf.')){const n='lifebookshelf.'+k.slice(12);if(localStorage.getItem(n)===null)localStorage.setItem(n,localStorage.getItem(k))}}}catch(e){}
+const LS='lifebookshelf.v1';
 const S={books:{},settings:{goal:24},synced:false,view:'shelf',filter:'all',fset:new Set(),rset:new Set(),rf:'',sq:'',exp:new Set(),year:0,timer:null,finishing:false,selMode:false,sel:new Set(),renameCat:null,delCat:null,delAll:false,editQ:null,delArmQ:null,qtag:'',qshift:0,progFrom:null,importing:false,openId:null,dtab:'review',qq:'',form:null,delArm:false};
 let cloud=null, sample=null, sampleImages=false, pendingRender=false;
 
@@ -892,7 +894,7 @@ Object.assign(EN_STR,{'처음 가입한 방법으로 로그인하세요. 이메�
 async function attachFirestore(uid){const base=FB.db.collection('users').doc(uid);
   cloud={books:base.collection('books'),settings:base.collection('meta').doc('settings'),errors:base.collection('errors')};
   setSync('내 계정에 저장 중');
-  const LSK='mybookshelf.lastSync.'+uid;let last=0;try{last=+localStorage.getItem(LSK)||0}catch(e){}
+  const LSK='lifebookshelf.lastSync.'+uid;let last=0;try{last=+localStorage.getItem(LSK)||0}catch(e){}
   if(last){try{const c=await cloud.books.get({source:'cache'});if(c.empty)last=0;else{const nb={};c.docs.forEach(d=>{const x=d.data();if(!x.deleted)nb[d.id]={...x}});S.books=nb;S.synced=true;renderSoon()}}catch(e){last=0}}
   let first=true,maxSeen=last;
   const q=last?cloud.books.where('updatedAt','>',last-5*60000):cloud.books;
@@ -964,7 +966,7 @@ const isNew=b=>!b.source&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
 const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||(b.createdAt||0)-(a.createdAt||0);
 function groupByCat(books){const m=new Map();books.forEach(b=>{const c=(b.category||'').trim()||'미분류';if(!m.has(c))m.set(c,[]);m.get(c).push(b)});
   return [...m.entries()].sort((a,b)=>a[0]==='미분류'?1:b[0]==='미분류'?-1:a[0].localeCompare(b[0],'ko')).map(([c,bs])=>[c,bs.sort(sortIn)])}
-function dashHTML(){let open=false;try{open=localStorage.getItem('mybookshelf.dash')==='1'}catch(e){}
+function dashHTML(){let open=false;try{open=localStorage.getItem('lifebookshelf.dash')==='1'}catch(e){}
   const c=dailyCfg(),m=dayMap(),t=m[dstr(new Date())],v=dayVal(t,c.unit),p=Math.min(1,v/c.target),st=streak(m),u=c.unit==='min'?'분':'쪽';
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
@@ -1092,7 +1094,7 @@ const sc=(S.settings.categories||[]);if(sc.some(c=>SUMCATS[c])){S.settings.categ
   if(!b.status||!STATUS[b.status]){b.status='want';ch=true}
   if(ch){b.v=SCHEMA;putBook(b)}})}
 function migrateCats(){runMigrations()}
-const ELK='mybookshelf.errors';let errCount=0;
+const ELK='lifebookshelf.errors';let errCount=0;
 function logError(kind,msg,stack){try{const e={at:Date.now(),kind,msg:String(msg||'').slice(0,300),stack:String(stack||'').slice(0,800),ua:navigator.userAgent.slice(0,120),view:S.view};
   const arr=JSON.parse(localStorage.getItem(ELK)||'[]');arr.unshift(e);localStorage.setItem(ELK,JSON.stringify(arr.slice(0,50)));
   if(cloud&&cloud.errors&&errCount<20){errCount++;cloud.errors.doc(String(e.at)+'_'+errCount).set(e).catch(()=>{})}}catch(x){}}
@@ -1100,12 +1102,12 @@ window.addEventListener('error',e=>logError('error',e.message,e.error&&e.error.s
 window.addEventListener('unhandledrejection',e=>logError('promise',e.reason&&(e.reason.message||e.reason.code||e.reason),e.reason&&e.reason.stack));
 function errList(){try{return JSON.parse(localStorage.getItem(ELK)||'[]')}catch(e){return[]}}
 function backupDue(){if(!list().length)return false;const t=+S.settings.lastBackup||0;return Date.now()-t>30*864e5}
-function backupCardHTML(){if(!backupDue()||!dl)return'';let snooze=0;try{snooze=+localStorage.getItem('mybookshelf.bksnooze')||0}catch(e){}if(Date.now()<snooze)return'';
+function backupCardHTML(){if(!backupDue()||!dl)return'';let snooze=0;try{snooze=+localStorage.getItem('lifebookshelf.bksnooze')||0}catch(e){}if(Date.now()<snooze)return'';
   const t=+S.settings.lastBackup||0;
   return `<div class="sec bkcard"><div><b>백업할 때가 됐어요</b><p class="hint" style="margin:2px 0 0">${t?`마지막 백업 ${ymd(new Date(t))}`:'아직 백업한 적이 없어요'}</p></div><div class="hbtns" style="flex:none"><button class="btn small" data-action="export" data-k="json">지금 백업</button><button class="linkbtn" data-action="bksnooze" style="font-size:12px">나중에</button></div></div>`}
 async function deleteAllData(){const ids=Object.keys(S.books);S.importing=true;let failed=0;
   if(typeof FB!=='undefined'&&FB&&FB.st){const urls=list().flatMap(b=>[b.cover,...(b.quotes||[]).map(q=>q.photo)]).filter(u=>typeof u==='string'&&u.includes('firebasestorage'));await Promise.all(urls.map(u=>{try{return FB.st.refFromURL(u).delete().catch(()=>{})}catch(e){return null}}))}
-  try{if(S.user)localStorage.removeItem('mybookshelf.lastSync.'+S.user.uid)}catch(e){}
+  try{if(S.user)localStorage.removeItem('lifebookshelf.lastSync.'+S.user.uid)}catch(e){}
   if(cloud){const q=ids.slice();const worker=async()=>{while(q.length){const id=q.shift();for(let t=0;t<3;t++){try{await cloud.books.doc(id).delete();break}catch(e){if(t===2)failed++;await new Promise(r=>setTimeout(r,600*(t+1)))}}}};
     await Promise.all([worker(),worker(),worker()]);try{await cloud.settings.set({goal:24})}catch(e){}}
   S.books={};S.settings={goal:24};S.synced=true;try{localStorage.removeItem(LS);localStorage.removeItem(ELK);localStorage.removeItem(TK)}catch(e){}
@@ -1125,7 +1127,7 @@ function dangerHTML(){return `<div class="sec danger-zone" id="sec-danger"><h2>�
 function errLogHTML(){const es=errList();if(!es.length)return'';return `<details class="sess" style="margin-top:0"><summary>최근 오류 기록 ${es.length}건</summary>${es.slice(0,10).map(e=>`<div class="srec" style="grid-template-columns:auto 1fr"><span>${ymd(new Date(e.at))}</span><span style="overflow-wrap:anywhere">${esc(e.msg)}</span></div>`).join('')}<button class="linkbtn" data-action="errclear" style="font-size:12px;margin-top:6px">기록 지우기</button></details>`}
 
 /* ---------- timer / sessions ---------- */
-const TK='mybookshelf.timer';
+const TK='lifebookshelf.timer';
 function loadTimer(){try{S.timer=JSON.parse(localStorage.getItem(TK)||'null')}catch(e){S.timer=null}}
 function saveTimer(){try{S.timer?localStorage.setItem(TK,JSON.stringify(S.timer)):localStorage.removeItem(TK)}catch(e){}}
 function startTimer(id){const b=S.books[id];if(!b)return;if(b.status==='want'){setStatus(b,'reading');putBook(b)}else if(b.status==='done'){reread(b)}
@@ -1180,11 +1182,11 @@ function addCat(name){name=(name||'').trim();if(!name)return;if(allCats().includ
 let dl=null;
 function csvCell(v){v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 async function exportData(kind){if(!dl)return;const d=today();
-  try{if(kind==='json'){await dl.save({filename:`MyBookShelf_${d}.json`,data:JSON.stringify({app:'MyBookShelf',exportedAt:new Date().toISOString(),settings:S.settings,books:list()},null,1)})}
+  try{if(kind==='json'){await dl.save({filename:`LifeBookshelf_${d}.json`,data:JSON.stringify({app:'LifeBookshelf',exportedAt:new Date().toISOString(),settings:S.settings,books:list()},null,1)})}
     else{const H=['title','author','publisher','isbn','category','format','pages','current','status','rating','owned','startedAt','finishedAt','readCount','review','summary','quotes','sessions'];
       const rows=list().map(b=>[b.title,b.author,b.publisher,b.isbn,b.category,FORMAT[b.format]||'',b.pages,b.current,STATUS[b.status],b.rating,b.owned?'Y':'',b.startedAt,b.finishedAt,b.readCount||'',b.review,b.summary,
         (b.quotes||[]).filter(q=>q.text).map(q=>q.text.replace(/\n/g,' ')+(q.page?` (p.${q.page})`:'')).join(' | '),(b.sessions||[]).length].map(csvCell).join(','));
-      await dl.save({filename:`MyBookShelf_${d}.csv`,data:'\uFEFF'+H.join(',')+'\n'+rows.join('\n')})}
+      await dl.save({filename:`LifeBookshelf_${d}.csv`,data:'\uFEFF'+H.join(',')+'\n'+rows.join('\n')})}
     if(kind==='json'){S.settings.lastBackup=Date.now();putSettings();renderMain()}toast('파일을 저장했어요')}
   catch(e){if(e&&e.code==='user_cancelled')return;if(e&&e.code==='unavailable'){dl=null;renderMain()}toast('파일을 저장하지 못했어요')}}
 
@@ -1268,18 +1270,18 @@ window.addEventListener('popstate',()=>{if(S.view!=='settings')return;if(S.drawe
   document.addEventListener('touchend',e=>{if(sx==null)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=Math.abs(t.clientY-sy);sx=null;if(dx>70&&dy<dx*.6)openDrawer()},{passive:true})})();
 function appbarHTML(){const shelf=S.view==='shelf';
   return `${S.view==='settings'?`<button class="iconbtn" data-action="back" aria-label="메뉴로">${svgI('back')}</button>`:`<button class="iconbtn" data-action="drawer" aria-label="메뉴 열기">${svgI('menu')}</button>`}
-  <button class="abrand" data-action="tab" data-tab="shelf"><b>My BookShelf</b></button>
+  <button class="abrand" data-action="tab" data-tab="shelf"><b>LifeBookshelf</b></button>
   <div class="hbtns acts">${shelf?`<button class="btn act${S.selMode?' selon':''}" data-action="selmode" aria-label="여러 권 골라 설정 바꾸기"><svg viewBox="0 0 24 24">${S.selMode?'<path d="M5 12l5 5 9-10"/>':'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'}</svg><span class="lbl">${S.selMode?'완료':'책 설정'}</span></button>`:''}<button class="btn act primary" data-action="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">책 추가</span></button></div>`}
 function drawerHTML(){const fb=typeof FB!=='undefined'&&FB;
   const it=(ic,l,v,a,cls)=>`<button class="ditem${cls?' '+cls:''}" data-action="dnav" data-v="${v}" data-a="${a||''}">${svgI(ic)}<span>${l}</span></button>`;
-  return `<div class="dtop"><button class="iconbtn" data-action="drawer" aria-label="메뉴 닫기">${svgI('menu')}</button><div class="dhead"><b>My BookShelf</b>${S.user?`<span>${esc(S.user.email||S.user.name||'')}</span>`:''}</div></div>
+  return `<div class="dtop"><button class="iconbtn" data-action="drawer" aria-label="메뉴 닫기">${svgI('menu')}</button><div class="dhead"><b>LifeBookshelf</b>${S.user?`<span>${esc(S.user.email||S.user.name||'')}</span>`:''}</div></div>
   ${it('shelf','서재','shelf','',S.view==='shelf'?'on':'')}<div class="dsep"></div>
   ${it('gear','설정','settings','',S.view==='settings'?'on':'')}${it('tag','분류 관리','settings','sec-cat')}
   <div class="dsep"></div>
   ${it('imp','책 가져오기 (파일)','import','')}${it('exp','백업·내보내기','settings','sec-export')}
   <div class="dsep"></div>
   ${fb?it('user','계정','settings','sec-account'):''}${it('trash','데이터 삭제','settings','sec-danger','danger')}
-  <div class="dfoot">${esc(trText(S.syncMsg||''))}<span class="dver">MyBookShelf ${APP_VERSION} (빌드 ${APP_BUILD_NO}) · ${APP_BUILD}<br>개발자 ${APP_DEV}</span></div>`}
+  <div class="dfoot">${esc(trText(S.syncMsg||''))}<span class="dver">LifeBookshelf ${APP_VERSION} (빌드 ${APP_BUILD_NO}) · ${APP_BUILD}<br>개발자 ${APP_DEV}</span></div>`}
 function openDrawer(){const d=$('#drawer');d.innerHTML=tr(drawerHTML());d.classList.add('open');d.setAttribute('aria-hidden','false');$('#dback').classList.add('open');S.drawer=true}
 function closeDrawer(){$('#drawer').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');$('#dback').classList.remove('open');S.drawer=false}
 let lastPer=0;window.addEventListener('resize',()=>{const n=shelfPer();if(lastPer&&n!==lastPer&&S.view==='shelf'){lastMain='';renderMain()}lastPer=n});
@@ -1505,7 +1507,7 @@ function privacyHTML(){const en=lang()==='en',mail=APP_CONTACT?`<a href="mailto:
   const H=(t)=>`<h3>${t}</h3>`,L=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
   const remedy=[['개인정보침해신고센터','Personal Information Infringement Report Center (KISA)','privacy.kisa.or.kr','118'],['개인정보분쟁조정위원회','Personal Information Dispute Mediation Committee','www.kopico.go.kr','1833-6972'],['대검찰청','Supreme Prosecutors\' Office','www.spo.go.kr','1301'],['경찰청','Korean National Police Agency','ecrm.police.go.kr','182']];
   if(!en)return `<h1>개인정보 처리방침</h1><p class="pvdate">시행일 ${PRIVACY_DATE.replace(/-/g,'. ')}.</p>
-<p>MyBookShelf(이하 '앱')는 「개인정보 보호법」 제30조에 따라 이용자의 개인정보를 보호하고 관련 고충을 원활하게 처리하기 위해 다음과 같이 개인정보 처리방침을 정합니다.</p>
+<p>LifeBookshelf(이하 '앱', 이전 이름 MyBookShelf)는 「개인정보 보호법」 제30조에 따라 이용자의 개인정보를 보호하고 관련 고충을 원활하게 처리하기 위해 다음과 같이 개인정보 처리방침을 정합니다.</p>
 ${H('1. 개인정보의 처리 목적')}${L(['회원 가입과 로그인(본인 확인)','독서 기록의 저장과 여러 기기 간 동기화','오류 확인과 서비스 개선'])}<p>위 목적 외에 광고, 마케팅, 이용자 분석 목적으로 이용하지 않습니다.</p>
 ${H('2. 처리하는 개인정보 항목')}${L(['<b>계정 정보:</b> 이메일 주소, 비밀번호(암호화되어 저장되며 앱 운영자도 볼 수 없음). Google로 로그인하면 이름, 이메일 주소, Google 계정 식별자','<b>이용자가 직접 입력한 정보:</b> 책 정보, 독서 상태와 날짜, 읽은 쪽수, 평점, 메모와 문구, 직접 올린 표지와 문구 사진, 대여 기록(빌려준 사람이나 빌린 곳 등 직접 적은 내용), 앱 설정','<b>자동으로 생성되는 정보:</b> 오류 기록(오류 내용, 브라우저 종류, 발생 화면), 로그인 기록(접속 IP 등, Firebase가 보안 목적으로 처리), 책 검색 사용 횟수(날짜와 횟수만, 하루 사용 한도 확인용)'])}<p>대여 기록에 다른 사람의 이름을 적을 때에는 구분에 필요한 정도로만 적어 주세요.</p>
 ${H('3. 보유 및 이용 기간')}<p>회원 탈퇴 시까지 보유합니다. 설정 > 데이터 삭제 > 계정과 모든 데이터 삭제로 탈퇴하면 지체 없이 파기합니다. 법령에 따라 별도로 보존하는 정보는 없습니다.</p>
@@ -1520,9 +1522,9 @@ ${H('11. 자동 수집 장치')}<p>쿠키나 광고, 분석 도구를 사용하�
 ${H('12. 만 14세 미만 아동')}<p>이 앱은 만 14세 미만 아동을 대상으로 하지 않으며, 법정대리인 동의 절차를 두고 있지 않습니다. 만 14세 미만은 가입하지 마세요.</p>
 ${H('13. 개인정보 보호책임자')}${L(['<b>성명:</b> '+APP_DEV+' (개발자)','<b>연락처:</b> '+mail])}
 ${H('14. 권익침해 구제 방법')}<p>개인정보 침해에 대한 신고나 상담은 아래 기관에 문의할 수 있습니다.</p>${L(remedy.map(r=>`${r[0]}: ${r[2]}, 국번 없이 ${r[3]}`))}
-${H('15. 처리방침의 변경')}<p>이 처리방침을 바꾸는 경우 시행 7일 전부터 이 화면에 알립니다.</p>${L([PRIVACY_DATE.replace(/-/g,'. ')+'. 제정'])}`;
+${H('15. 처리방침의 변경')}<p>이 처리방침을 바꾸는 경우 시행 7일 전부터 이 화면에 알립니다.</p>${L([PRIVACY_DATE.replace(/-/g,'. ')+'. 제정','2026. 11. 12. 앱 이름 변경(MyBookShelf → LifeBookshelf), 내용 변경 없음'])}`;
   return `<h1>Privacy Policy</h1><p class="pvdate">Effective ${PRIVACY_DATE}</p>
-<p>MyBookShelf ("the app") sets out this privacy policy under Article 30 of the Korean Personal Information Protection Act (PIPA) to protect users' personal information and handle related requests promptly.</p>
+<p>LifeBookshelf ("the app", formerly MyBookShelf) sets out this privacy policy under Article 30 of the Korean Personal Information Protection Act (PIPA) to protect users' personal information and handle related requests promptly.</p>
 ${H('1. Purposes of processing')}${L(['Sign-up and sign-in (identifying you)','Storing your reading records and syncing them across devices','Finding errors and improving the app'])}<p>Your information is not used for advertising, marketing or user profiling.</p>
 ${H('2. Information we process')}${L(['<b>Account:</b> email address and password (stored encrypted; not visible even to the operator). If you sign in with Google: name, email address and Google account identifier','<b>What you enter:</b> book details, reading status and dates, pages read, ratings, notes and quotes, cover and quote photos you upload, loan records (names of people or places you type in), app settings','<b>Generated automatically:</b> error logs (error message, browser type, screen) and sign-in records (such as IP address, processed by Firebase for security), and a book search usage count (date and count only, to apply the daily limit)'])}<p>When you write another person\'s name in a loan record, please enter only what you need to tell them apart.</p>
 ${H('3. Retention period')}<p>Kept until you delete your account. Deleting it in Settings > Delete data > Delete account and all data erases it without delay. No information is retained under other laws.</p>
@@ -1537,7 +1539,7 @@ ${H('11. Automatic collection')}<p>The app uses no cookies, advertising or analy
 ${H('12. Children under 14')}<p>The app is not intended for children under 14 and has no parental consent process. Children under 14 should not sign up.</p>
 ${H('13. Privacy officer')}${L(['<b>Name:</b> '+APP_DEV+' (developer)','<b>Contact:</b> '+mail])}
 ${H('14. Remedies')}<p>For reports or advice about privacy infringement, you can contact the following Korean agencies.</p>${L(remedy.map(r=>`${r[1]}: ${r[2]}, ${r[3]} (in Korea)`))}
-${H('15. Changes')}<p>Any change to this policy is announced on this screen at least 7 days before it takes effect.</p>${L(['Established '+PRIVACY_DATE])}`}
+${H('15. Changes')}<p>Any change to this policy is announced on this screen at least 7 days before it takes effect.</p>${L(['Established '+PRIVACY_DATE,'2026-11-12 App renamed (MyBookShelf → LifeBookshelf), no change in content'])}`}
 function openPrivacy(){const el=$('#pvsheet');if(!el)return;$('#pvIn').innerHTML=`<div class="pvbar"><button class="iconbtn" data-action="pvclose" aria-label="${lang()==='en'?'Close':'닫기'}">${svgI('back')}</button></div><article class="pvdoc">${privacyHTML()}</article>`;el.classList.add('open');el.setAttribute('aria-hidden','false');el.scrollTop=0}
 function closePrivacy(){const el=$('#pvsheet');if(el){el.classList.remove('open');el.setAttribute('aria-hidden','true')}}
 
@@ -1615,13 +1617,13 @@ document.addEventListener('click',e=>{
     case 'setpw':setPassword();break;
     case 'logout':fbLogout();break;
     case 'migrimg':migrateImages();break;
-    case 'dash':{let o=false;try{o=localStorage.getItem('mybookshelf.dash')==='1';localStorage.setItem('mybookshelf.dash',o?'0':'1')}catch(e){}renderMain();break}
+    case 'dash':{let o=false;try{o=localStorage.getItem('lifebookshelf.dash')==='1';localStorage.setItem('lifebookshelf.dash',o?'0':'1')}catch(e){}renderMain();break}
     case 'sopen':S.sopen=!(S.sopen||S.sq);if(!S.sopen)S.sq='';renderMain();if(S.sopen)setTimeout(()=>{const x=$('.search');if(x)x.focus()},30);break;
     case 'ropen':S.ropen=!(S.ropen||S.rset.size);if(!S.ropen)S.rset.clear();renderMain();break;
     case 'editid':openForm(t.dataset.id);break;
     case 'shelve':{const b=S.books[t.dataset.id];if(b){setStatus(b,'unread');b.owned=true;putBook(b);renderAll();toast(trText('서재에 등록했어요'))}break}
     case 'readnow':{const b=S.books[t.dataset.id];if(b){if(b.status==='done'){reread(b);renderAll()}else{setStatus(b,'reading');putBook(b);renderAll();toast(trText('읽는 중에 추가했어요'))}}break}
-    case 'bksnooze':try{localStorage.setItem('mybookshelf.bksnooze',String(Date.now()+7*864e5))}catch(e){}renderMain();break;
+    case 'bksnooze':try{localStorage.setItem('lifebookshelf.bksnooze',String(Date.now()+7*864e5))}catch(e){}renderMain();break;
     case 'errclear':try{localStorage.removeItem(ELK)}catch(e){}renderMain();break;
     case 'delall':S.delAll=true;renderMain();setTimeout(()=>$('#delconfirm')?.focus(),30);break;
     case 'delallcancel':S.delAll=false;renderMain();break;
@@ -1834,8 +1836,8 @@ $('#impfile').addEventListener('change',async e=>{const file=e.target.files[0];e
       IMP.mode='bw';IMP.src='Bookswing 백업';IMP.prepared=bw;IMP.step='bwreview'}catch(err){IMP.err=err.message==='zip'?'압축 해제 도구를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.':'이 압축 파일에서 Bookswing 책 기록(.book)을 찾지 못했어요.'}
     renderImp();return}
   IMP.mode='table';
-  if(/\.json$/i.test(file.name)){try{const j=JSON.parse(decode(await file.arrayBuffer()));if(j&&j.app==='MyBookShelf'&&Array.isArray(j.books)){
-    IMP.mode='mbs';IMP.src='MyBookShelf 백업';IMP.prepared=finishPrepared(j.books.filter(b=>b&&b.title).map(b=>{const o={...b};delete o.id;o.quotes=(o.quotes||[]).map(q=>({text:q.text||'',page:q.page||'',photo:q.photo,at:q.at}));return o}));IMP.step='bwreview';renderImp();return}}catch(e){}}
+  if(/\.json$/i.test(file.name)){try{const j=JSON.parse(decode(await file.arrayBuffer()));if(j&&(j.app==='LifeBookshelf'||j.app==='MyBookShelf')&&Array.isArray(j.books)){
+    IMP.mode='mbs';IMP.src='LifeBookshelf 백업';IMP.prepared=finishPrepared(j.books.filter(b=>b&&b.title).map(b=>{const o={...b};delete o.id;o.quotes=(o.quotes||[]).map(q=>({text:q.text||'',page:q.page||'',photo:q.photo,at:q.at}));return o}));IMP.step='bwreview';renderImp();return}}catch(e){}}
   if(/\.txt$/i.test(file.name)){try{const t=decode(await file.arrayBuffer());if(t.includes('==========')){const k=parseKindle(t);
     if(k&&k.length){IMP.mode='kindle';IMP.src='Kindle 하이라이트';IMP.prepared=k;IMP.step='bwreview';renderImp();return}}}catch(e){}}
   try{const sh=await readImportFile(file);const names=Object.keys(sh);
@@ -2078,9 +2080,9 @@ $('#imp').addEventListener('change',e=>{const t=e.target;
 /* ---------- 받기: GMDLibrary(GMDSOFT 사내 도서관)에서 끌어 놓은 책 (1.6.2) ----------
    표지: 사내에서 직접 찍은 표지는 이미지로 함께 온다. 나머지(예스24 등 서점 표지)는 약관상 넘겨받지 않고, 이 앱이 자기 검색(카카오·예스24·Google·Open Library)으로 ISBN·제목으로 다시 찾는다.
    사내 화면(https://bizcenter.gmdsoft.co.kr)에서 이 앱을 나란히 띄우고 책을 끌어다 놓으면 여기 서재에 복사한다.
-   끌어 놓기: text/plain 'MYBOOKSHELF:{"books":[...]}' / 버튼 보내기: postMessage {type:'mbs:add',books} (허용한 주소에서만) */
+   끌어 놓기: text/plain 'LIFEBOOKSHELF:{"books":[...]}' (예전 'MYBOOKSHELF:'도 받음) / 버튼 보내기: postMessage {type:'mbs:add',books} (허용한 주소에서만) */
 const MBS_IN_ORIGINS=['https://bizcenter.gmdsoft.co.kr'];
-const MBS_MARK='MYBOOKSHELF:';
+const MBS_MARK='MYBOOKSHELF:',MBS_MARK2='LIFEBOOKSHELF:';
 const mbsKey=b=>[b.title,b.author].map(v=>String(v||'').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'')).join('|');
 const MBS_STATUS=['want','reading','done','unread'];
 function mbsTakeBooks(arr){if(!Array.isArray(arr))return {added:0,dup:0};const have=new Set(list().map(mbsKey)),now=Date.now();let added=0,dup=0;
@@ -2110,7 +2112,7 @@ async function mbsFillCovers(){if(mbsCoverBusy)return;mbsCoverBusy=true;let n=0;
   try{while(mbsNeedCover.length&&n<30){const id=mbsNeedCover.shift(),b=S.books[id];if(!b||b.cover)continue;n++;
       const c=await mbsFindCover(b);if(c&&S.books[id]&&!S.books[id].cover){S.books[id].cover=c;putBook(S.books[id]);renderSoon()}}}
   finally{mbsCoverBusy=false}}
-function mbsParse(t){if(typeof t!=='string'||!t.startsWith(MBS_MARK))return null;try{const j=JSON.parse(t.slice(MBS_MARK.length));return j&&Array.isArray(j.books)?j.books:null}catch(e){return null}}
+function mbsParse(t){if(typeof t!=='string')return null;const mk=t.startsWith(MBS_MARK2)?MBS_MARK2:t.startsWith(MBS_MARK)?MBS_MARK:'';if(!mk)return null;try{const j=JSON.parse(t.slice(mk.length));return j&&Array.isArray(j.books)?j.books:null}catch(e){return null}}
 const mbsParent=()=>{try{const o=new URL(document.referrer).origin;return MBS_IN_ORIGINS.includes(o)?o:''}catch(e){return ''}};
 /* ---------- GMDLibrary 연동 추가 (1.8.0): 로그인 상태 알리기 ----------
    사내 화면(GMDLibrary BookShelf 탭)이 '가입했는지' 알 수 있게, 나란히 보기 칸(iframe) 안에서 열렸을 때만
