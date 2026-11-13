@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b117">
+<link rel="manifest" href="manifest.webmanifest?b118">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b117">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b117">
+<link rel="apple-touch-icon" href="icon-180.png?b118">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b118">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -457,6 +457,8 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;z-index:30;
   background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13px;transition:all .2s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.act{pointer-events:auto}.toast .tact{margin-left:6px;background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:2px 4px}
+section.cat.mbs-hov{outline:3px dashed var(--accent);outline-offset:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent)}
 .sync{font-size:11px;color:var(--muted);text-align:center;padding:18px 0 0}
 .hbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex:1;min-width:0}
 .btn.act{display:inline-flex;align-items:center;gap:5px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
@@ -726,7 +728,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.12.4',APP_BUILD_NO=117,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.12.5',APP_BUILD_NO=118,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -946,7 +948,7 @@ const doneThisYear=()=>list().filter(b=>b.status==='done'&&(b.finishedAt||'').st
 function coverHTML(b){return b.cover?`<img src="${b.cover}" alt="" decoding="sync">`:`<div class="gen" style="--c:${bc(b)}"><span>${esc(b.title)}</span><small>${esc(b.author||'')}</small></div>`}
 const destOf=b=>b.status==='want'?'Wishlist':b.status==='reading'?'읽는 중':b.isSummary?'요약본':'Shelf';
 function recentHTML(rs){const md=t=>{const d=new Date(t);return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`};
-  return `<div class="cath"><h2>최근 추가</h2><span>${rs.length}권</span></div><div class="cont">${rs.map(b=>`
+  return `<div class="cath" id="recentsec"><h2>최근 추가</h2><span>${rs.length}권</span></div><div class="cont">${rs.map(b=>`
     <div class="ccard rcard" style="--c:${bc(b)}"><button class="cvbtn" data-action="open" data-id="${b.id}" aria-label="${esc(b.title)}">${b.cover?`<img class="mini" src="${b.cover}" alt="" decoding="sync">`:`<div class="mini gmini"><span>${esc(b.title)}</span></div>`}</button><div>
       <button class="t" data-action="open" data-id="${b.id}">${esc(b.title)}</button><div class="a"><span class="au">${esc(b.author||'')}</span><span class="sd">${b.author?'· ':''}${md(b.createdAt)} 추가</span></div>
       <div class="rmeta"><span class="dchip">${destOf(b)}</span>${b.category&&!b.isSummary&&b.status!=='want'?`<span class="rcat">${esc(b.category)}</span>`:''}${b.format?`<span class="rcat">${FORMAT[b.format]}</span>`:''}</div>
@@ -955,7 +957,7 @@ function recentHTML(rs){const md=t=>{const d=new Date(t);return `${d.getFullYear
 function trayItemHTML(b){const sel=S.selMode&&S.sel.has(b.id);
   return `<button class="titem${sel?' sel':''}" data-action="${S.selMode?'seltile':'open'}" data-id="${b.id}" aria-label="${esc(b.title)}"><div class="tcv">${coverHTML(b)}${isNew(b)?'<span class="newb">NEW</span>':''}${b.format?`<span class="tfm">${FORMAT[b.format]}</span>`:''}${b.rating?`<span class="rt">${starsInline(b.rating)}</span>`:''}</div><b>${esc(b.title)}</b><small>${esc(b.author||'')}</small></button>`}
 function trayHTML(key,name,books){books=[...books].sort((a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?b.createdAt-a.createdAt:0));const ic=key==='__summary'||name==='요약본'?'<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>':'<path d="M7 3h10v18l-5-4-5 4z"/>';
-  return `<section class="cat traysec"><div class="cath"><svg class="trayic" viewBox="0 0 24 24">${ic}</svg><h2>${esc(trText(name))}</h2><span>${books.length}권</span><em>서재 입고 전</em></div>
+  return `<section class="cat traysec" data-cat="${esc(key)}"><div class="cath"><svg class="trayic" viewBox="0 0 24 24">${ic}</svg><h2>${esc(trText(name))}</h2><span>${books.length}권</span><em>서재 입고 전</em></div>
     <div class="tray">${books.map(trayItemHTML).join('')}</div></section>`}
 function tileHTML(b,mixed){const p=pct(b),nw=S._recentSec&&isNew(b),nb=!S._recentSec&&isNew(b);
   return `<button class="tile${nw?' inrecent':''}${nb?' isnew':''}${mixed&&b.status==='want'?' wish':''}${S.selMode&&S.sel.has(b.id)?' sel':''}" data-action="${S.selMode?'seltile':'open'}" data-id="${b.id}" aria-label="${esc(b.title)}, ${STATUS[b.status]}${b.rating?', 평점 '+b.rating:''}">
@@ -964,9 +966,9 @@ function tileHTML(b,mixed){const p=pct(b),nw=S._recentSec&&isNew(b),nb=!S._recen
 const shelfPer=()=>innerWidth>=1400?8:innerWidth>=1024?7:innerWidth>=700?5:3;
 function sectionHTML(key,name,books,mixed,pre){if(pre)return trayHTML(key,name,books);S._recentSec=key==='__recent';const per=shelfPer(),pages=[];for(let i=0;i<books.length;i+=per)pages.push(books.slice(i,i+per));
   const dots=pages.length<=1?'':`<div class="dots"><div class="dwrap"><div class="dtrack">${pages.map((_,i)=>`<button class="dot${i===0?' on':''}${i>14?' far':''}" data-action="dot" data-i="${i}" aria-label="${i+1}/${pages.length}"></button>`).join('')}</div></div>${pages.length>16?`<span class="dn"><b>1</b>/${pages.length}</span>`:''}</div>`;
-  return `<section class="cat${pre?' pre':''}"><div class="cath"><h2>${esc(name)}</h2><span>${books.length}권</span>${pre?'<em>서재 입고 전</em>':''}</div>
+  return `<section class="cat${pre?' pre':''}" data-cat="${esc(key)}"><div class="cath"><h2>${esc(name)}</h2><span>${books.length}권</span>${pre?'<em>서재 입고 전</em>':''}</div>
     <div class="wood" data-pages="${pages.length}" style="--per:${per}">${pages.map(r=>`<div class="srow">${r.map(b=>tileHTML(b,mixed)).join('')}</div>`).join('')}</div>${dots}</section>`}
-const isNew=b=>!b.source&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
+const isNew=b=>(!b.source||b.source==='GMDLibrary')&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
 const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||(b.createdAt||0)-(a.createdAt||0);
 function groupByCat(books){const m=new Map();books.forEach(b=>{const c=(b.category||'').trim()||'미분류';if(!m.has(c))m.set(c,[]);m.get(c).push(b)});
   return [...m.entries()].sort((a,b)=>a[0]==='미분류'?1:b[0]==='미분류'?-1:a[0].localeCompare(b[0],'ko')).map(([c,bs])=>[c,bs.sort(sortIn)])}
@@ -1884,7 +1886,9 @@ function updateDots(w){const pg=Math.round(w.scrollLeft/Math.max(1,w.clientWidth
   dots.forEach((x,i)=>{x.classList.toggle('on',i===pg);x.classList.toggle('far',n>vis&&(i<off+1&&off>0||i>off+vis-2&&off<n-vis))});
   const tr=d.querySelector('.dtrack');if(tr)tr.style.transform=`translateX(${-off*12}px)`;const dn=d.querySelector('.dn b');if(dn)dn.textContent=pg+1}
 document.addEventListener('scroll',e=>{const w=e.target;if(w.classList&&w.classList.contains('wood'))updateDots(w)},true);
-let tt;function toast(m){const el=$('#toast');el.textContent=trText(m);el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2200)}
+let tt;function toast(m){const el=$('#toast');el.textContent=trText(m);el.classList.remove('act');el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2200)}
+/* toast with one button, e.g. [보기] after books arrive from GMDLibrary */
+function toastAct(m,label,fn){const el=$('#toast');el.textContent=trText(m)+' ';const b=document.createElement('button');b.className='tact';b.type='button';b.textContent=trText(label);b.onclick=()=>{el.classList.remove('show','act');fn()};el.appendChild(b);el.classList.add('show','act');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show','act'),6000)}
 
 /* ---------- import (Bookswing backup etc.) ---------- */
 const FIELDS=[['title','제목'],['author','저자'],['publisher','출판사'],['isbn','ISBN'],['pages','전체 쪽수'],['current','읽은 쪽'],['status','독서 상태'],['rating','평점'],['owned','소장 여부'],['startedAt','시작일'],['finishedAt','완독일'],['review','리뷰·감상'],['summary','요약'],['quote','문구'],['quotePage','문구 쪽']];
@@ -2200,7 +2204,7 @@ const MBS_IN_ORIGINS=['https://bizcenter.gmdsoft.co.kr'];
 const MBS_MARK='MYBOOKSHELF:',MBS_MARK2='LIFEBOOKSHELF:';
 const mbsKey=b=>[b.title,b.author].map(v=>String(v||'').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'')).join('|');
 const MBS_STATUS=['want','reading','done','unread'];
-function mbsTakeBooks(arr){if(!Array.isArray(arr))return {added:0,dup:0};const have=new Set(list().map(mbsKey)),now=Date.now();let added=0,dup=0;
+function mbsTakeBooks(arr,drop){if(!Array.isArray(arr))return {added:0,dup:0};const ids=[],cats=allCats();const have=new Set(list().map(mbsKey)),now=Date.now();let added=0,dup=0;
   arr.slice(0,500).forEach((x,i)=>{if(!x||!x.title)return;const k=mbsKey(x);if(have.has(k)){dup++;return}have.add(k);
     const str=(v,n)=>String(v??'').slice(0,n),pages=Math.max(0,+x.pages||0);
     const b={id:uid(),title:str(x.title,300),author:str(x.author,200),publisher:str(x.publisher,200),isbn:str(x.isbn,20).replace(/[^\dXx]/g,'').slice(0,13),
@@ -2210,10 +2214,28 @@ function mbsTakeBooks(arr){if(!Array.isArray(arr))return {added:0,dup:0};const h
       startedAt:str(x.startedAt,10),finishedAt:str(x.finishedAt,10),source:'GMDLibrary',createdAt:now-i};
     if(/^#[0-9a-f]{6}$/i.test(x.color||''))b.color=x.color;
     if(/^(data:image\/|https:\/\/)/.test(x.cover||'')&&!/image\.yes24\.com/i.test(x.cover))b.cover=x.cover;
-    putBook(b);added++;if(!b.cover)mbsNeedCover.push(b.id)});
+    /* drop target (1.12.5): a category shelf sets the category; Wishlist sets status want; the summary shelf marks a summary.
+       Dropped anywhere else, a category the user does not have yet is left empty so GMDLibrary categories do not add shelves. */
+    if(drop){if(drop.key==='__wish'){b.status='want';b.category='';b.current=0;b.startedAt='';b.finishedAt=''}
+      else if(drop.key==='__summary'){b.isSummary=true;b.format='app';if(b.category&&!cats.includes(b.category))b.category=''}
+      else if(drop.key)b.category=drop.key==='미분류'?'':drop.key.slice(0,60);
+      else if(b.category&&!cats.includes(b.category))b.category=''}
+    putBook(b);ids.push(b.id);added++;if(!b.cover)mbsNeedCover.push(b.id)});
   if(added){renderAll();setTimeout(mbsFillCovers,300)}
-  toast(added?`${added}권을 서재에 복사했어요${dup?` (이미 있는 ${dup}권은 건너뜀)`:''}`:dup?'이미 서재에 있는 책이에요':'복사할 책이 없어요');
-  return {added,dup}}
+  const cat=drop&&drop.key?drop.label:(ids.length&&ids.every(id=>S.books[id].category===S.books[ids[0]].category)?S.books[ids[0]].category||'':'');
+  const msg=added?`${cat?`'${cat}' ${drop&&drop.key==='__wish'?'칸':'분류'}에 `:''}${added}권을 ${cat?'':'서재에 '}복사했어요${dup?` (이미 있는 ${dup}권은 건너뜀)`:''}`:dup?'이미 서재에 있는 책이에요':'복사할 책이 없어요';
+  if(added)toastAct(msg,'보기',()=>mbsShow(ids));else toast(msg);
+  return {added,dup,category:cat}}
+/* [보기]: one book opens its page; several scroll to Recently added */
+function mbsShow(ids){if(ids.length===1&&S.books[ids[0]]){openBook(ids[0]);return}
+  if(S.openId)closeBook();if(S.view!=='shelf'||S.fset.size||S.rset.size||S.sq){S.view='shelf';S.fset.clear();S.rset.clear();S.sq='';renderMain()}
+  requestAnimationFrame(()=>{const el=document.getElementById('recentsec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})})}
+/* the shelf under a point or element: {key,label}; key '' when it is not on a category shelf */
+function mbsDropAt(el){const sec=el&&el.closest&&el.closest('section.cat[data-cat]');if(!sec)return {key:'',label:''};const k=sec.dataset.cat;
+  return {key:k,label:k==='__wish'?'Wishlist':k==='__summary'?'요약본':k}}
+const mbsPoint=(x,y)=>x==null||y==null?null:document.elementFromPoint(+x,+y);
+function mbsHover(el){document.querySelectorAll('section.cat.mbs-hov').forEach(n=>{if(!el||!el.closest||n!==el.closest('section.cat'))n.classList.remove('mbs-hov')});
+  const sec=el&&el.closest&&el.closest('section.cat[data-cat]');if(sec)sec.classList.add('mbs-hov');return mbsDropAt(el)}
 const mbsNeedCover=[];let mbsCoverBusy=false;
 /* 받은 책의 표지를 이 앱의 검색으로 찾는다 (ISBN 우선, 없으면 제목이 같은 책). 한 번에 30권까지, 한 권씩 */
 async function mbsFindCover(b){const isb=cleanIsbn(b.isbn),t=x=>String(x||'').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'');
@@ -2234,15 +2256,20 @@ const mbsParent=()=>{try{const o=new URL(document.referrer).origin;return MBS_IN
    로그인(이메일 인증 완료) 여부를 사내 주소에 알린다. 이메일 등 개인정보는 보내지 않는다.
    기존 '받기' 코드(MBS_IN_ORIGINS, mbsParent) 바로 뒤에 넣는다. */
 const mbsSigned=()=>!!(S.user&&S.user.uid&&!S.user.unverified);
-const mbsStatus=()=>({type:'mbs:status',signedIn:mbsSigned(),app:APP_VERSION+' ('+APP_BUILD_NO+')'});
+const mbsStatus=()=>({type:'mbs:status',signedIn:mbsSigned(),app:APP_VERSION+' ('+APP_BUILD_NO+')',catDrop:true});
 window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:ping')return;if(e.source)e.source.postMessage(mbsStatus(),e.origin)});
 (()=>{const o=mbsParent();if(!o||window.parent===window)return;let last=null;const tick=()=>{const v=mbsSigned();if(v!==last){last=v;window.parent.postMessage(mbsStatus(),o)}};setTimeout(tick,800);setInterval(tick,1500)})();
 const mbsTypes=e=>[...((e.dataTransfer&&e.dataTransfer.types)||[])];
-document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop')});
-document.addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('mbs-drop')});
-document.addEventListener('drop',e=>{document.body.classList.remove('mbs-drop');const books=mbsParse(e.dataTransfer&&e.dataTransfer.getData('text/plain'));if(!books)return;e.preventDefault();
-  const r=mbsTakeBooks(books),o=mbsParent();if(o&&window.parent!==window)window.parent.postMessage({type:'mbs:added',...r},o)});
-window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:add')return;const r=mbsTakeBooks(e.data.books);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
+document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop');mbsHover(e.target)});
+document.addEventListener('dragleave',e=>{if(!e.relatedTarget){document.body.classList.remove('mbs-drop');mbsHover(null)}});
+document.addEventListener('drop',e=>{document.body.classList.remove('mbs-drop');mbsHover(null);const books=mbsParse(e.dataTransfer&&e.dataTransfer.getData('text/plain'));if(!books)return;e.preventDefault();
+  const r=mbsTakeBooks(books,mbsDropAt(e.target)),o=mbsParent();if(o&&window.parent!==window)window.parent.postMessage({type:'mbs:added',...r},o)});
+window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:add')return;const at=e.data.at;
+  let drop=null;if(at&&typeof at==='object'){drop=mbsDropAt(mbsPoint(at.x,at.y));mbsHover(null)}
+  const r=mbsTakeBooks(e.data.books,drop);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
+/* GMDLibrary sends the pointer position while dragging over this frame; highlight the shelf and say which one it is */
+window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:hover')return;const d=mbsHover(mbsPoint(e.data.x,e.data.y));
+  if(e.source&&e.data.x!=null)e.source.postMessage({type:'mbs:hovered',category:d.label},e.origin)});
 Object.assign(EN_STR,{'이미 서재에 있는 책이에요':'Already on your shelf','복사할 책이 없어요':'Nothing to copy'});
 EN_RX.unshift([/(\d+)권을 서재에 복사했어요/g,'Copied $1 books to your shelf'],[/ \(이미 있는 (\d+)권은 건너뜀\)/g,' ($1 already there, skipped)']);
 /* ---------- update notice (1.9.0): version.json next to index.html tells which build is on the server ----------

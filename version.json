@@ -1,20 +1,16 @@
 {
-  "version": "1.12.4",
-  "build": 117,
+  "version": "1.12.5",
+  "build": 118,
   "notes": {
     "ko": [
-      "설정 > 책 검색에 '제목으로 찾기'를 추가했어요. ISBN이 없거나 쪽수를 못 찾은 종이북과 이북을 제목, 저자, 출판사로 찾아 ISBN, 쪽수, 큰 표지를 채워요.",
-      "판본이 여러 개라 하나로 정할 수 없는 책은 '판본 고르기' 목록에 모아요. 표지와 출판 연도를 보고 직접 고르면 돼요. 끝난 뒤 한 번에 되돌릴 수도 있어요.",
-      "앱북과 오디오북은 쪽수가 있어도 진도를 퍼센트로 기록해요. 통계의 읽은 쪽수와 가장 긴 책에서는 빠져요.",
-      "새로 추가하는 책의 형식은 종이북이 기본이에요.",
-      "ISBN을 13자리로 통일하고, 형식이 비어 있던 책은 종이북, 요약본은 앱북으로 정리했어요."
+      "GMDLibrary에서 끌어 놓은 책이 '최근 추가'에 보이고, 복사 알림의 [보기]로 바로 열 수 있어요.",
+      "GMDLibrary에서 책을 원하는 분류 칸에 끌어 놓으면 그 분류로 들어가요. 끄는 동안 놓을 칸이 강조돼요. Wishlist 칸에 놓으면 Wishlist에 담겨요.",
+      "분류 칸이 아닌 곳에 놓으면, 내 분류에 없는 GMDLibrary 분류는 새로 만들지 않고 미분류로 넣어요."
     ],
     "en": [
-      "Added 'Find by title' in Settings > Book search. Paper books and e-books with no ISBN or page count are looked up by title, author and publisher to fill in the ISBN, page count and a large cover.",
-      "Books with several possible editions are collected in an 'Pick editions' list, where you choose by cover and year. You can undo the whole run afterwards.",
-      "App books and audiobooks are tracked in percent even when the page count is known, and are left out of pages read and longest book in Stats.",
-      "New books are set to Paper by default.",
-      "ISBNs are stored as 13 digits, books with no format became Paper, and summaries became App books."
+      "Books dragged in from GMDLibrary show in Recently added, and the copy notice has a View button.",
+      "Drop a book from GMDLibrary on a category shelf to file it there; the shelf is highlighted while you drag. Dropping on Wishlist adds it to the Wishlist.",
+      "Dropped anywhere else, a GMDLibrary category you don't have is not added as a new shelf; the book goes to Uncategorized."
     ]
   }
 }
