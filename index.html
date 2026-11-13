@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b114">
+<link rel="manifest" href="manifest.webmanifest?b116">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b114">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b114">
+<link rel="apple-touch-icon" href="icon-180.png?b116">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b116">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -725,7 +725,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.12.1',APP_BUILD_NO=114,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.12.3',APP_BUILD_NO=116,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -817,7 +817,7 @@ async function offloadImages(b){if(!FB||!FB.st||FB.stOff||!S.user)return b;const
   if(ch){S.books[b.id]=b;saveLocal()}return b}
 function cloudWrite(b){const go=x=>cloud.books.doc(x.id).set(JSON.parse(JSON.stringify(x))).catch(onWriteErr);
   if(FB&&FB.st&&!FB.stOff&&(isDataUrl(b.cover)||(b.quotes||[]).some(q=>isDataUrl(q.photo))))return offloadImages(b).then(go);return go(b)}
-function putBook(b){b.updatedAt=Date.now();S.books[b.id]=b;saveLocal();if(cloud)cloudWrite(b)}
+function putBook(b){normBookIsbn(b);b.updatedAt=Date.now();S.books[b.id]=b;saveLocal();if(cloud)cloudWrite(b)}
 const timers={};
 function putBookLater(b){S.books[b.id]=b;saveLocal();clearTimeout(timers[b.id]);timers[b.id]=setTimeout(()=>putBook(S.books[b.id]),700)}
 function removeBook(id){const old=S.books[id];delete S.books[id];saveLocal();if(!cloud)return;
@@ -1083,13 +1083,16 @@ function timelineHTML(b){const ev=[];
   return `<div class="tl">${ev.map(e=>`<div class="tli ${e.k}"><span>${e.d||''}</span><div>${line(e)}</div></div>`).join('')}</div>`}
 
 /* ---------- ops: migrations, error log, backup reminder, data deletion ---------- */
-const SCHEMA=2;
+const SCHEMA=4;
 function runMigrations(){if(S.settings.kakaoKey||S.settings.yes24Key){delete S.settings.kakaoKey;delete S.settings.yes24Key;putSettings()}
 const sc=(S.settings.categories||[]);if(sc.some(c=>SUMCATS[c])){S.settings.categories=sc.filter(c=>!SUMCATS[c]);putSettings()}
   Object.values(S.books).forEach(b=>{if((b.v||0)>=SCHEMA&&!CAT_RENAME[b.category]&&!SUMCATS[b.category])return;let ch=false;
   const n=CAT_RENAME[b.category];if(n){b.category=n;ch=true}
   if(SUMCATS[b.category]){b.isSummary=true;b.category='';ch=true}
   if(b.isbn&&!isbnOk(b.isbn)){b.isbn='';ch=true}
+  if(normBookIsbn(b))ch=true;
+  /* 1.12.3: one-time format fill - summaries are app books, books with no format are paper */
+  if((b.v||0)<4){const fm=b.isSummary?'app':(b.format||'paper');if(fm!==b.format){b.format=fm;ch=true}}
   if(Array.isArray(b.quotes)&&b.quotes.some(q=>!q.id)){b.quotes=b.quotes.map((q,j)=>q.id?q:{...q,id:uid()+j});ch=true}
   if(!b.status||!STATUS[b.status]){b.status='want';ch=true}
   if(ch){b.v=SCHEMA;putBook(b)}})}
@@ -1385,8 +1388,8 @@ function closeForm(){S.form=null;$('#modal').hidden=true}
 function saveForm(){const f=S.form;
   if(!f.title.trim()){f.err='제목을 입력해 주세요';renderForm();$('#f-title').focus();return}
   const pages=Math.max(0,parseInt(f.pages)||0);
-  if(f.id){const b={...S.books[f.id],title:f.title.trim(),author:f.author.trim(),pages,color:f.color,owned:f.owned,isSummary:!!f.isSummary,lent:!!f.lent,lentTo:f.lent?(f.lentTo||'').trim():'',lentDue:f.lent?(f.lentDue||''):'',lentAt:f.lent?(S.books[f.id].lentAt||today()):'',borrowed:!!f.borrowed,borrowFrom:f.borrowed?(f.borrowFrom||'').trim():'',borrowDue:f.borrowed?(f.borrowDue||''):'',borrowAt:f.borrowed?(S.books[f.id].borrowAt||today()):'',format:f.format,category:formCat(f),cover:f.cover||'',isbn:cleanIsbn(f.isbn),publisher:(f.publisher||'').trim()};if(b.current>pages&&pages)b.current=pages;putBook(b);closeForm();renderAll();toast('저장했어요');return}
-  const b={id:uid(),title:f.title.trim(),author:f.author.trim(),pages,current:0,status:'want',owned:f.owned,isSummary:!!f.isSummary,lent:!!f.lent,lentTo:f.lent?(f.lentTo||'').trim():'',lentDue:f.lent?(f.lentDue||''):'',lentAt:f.lent?today():'',borrowed:!!f.borrowed,borrowFrom:f.borrowed?(f.borrowFrom||'').trim():'',borrowDue:f.borrowed?(f.borrowDue||''):'',borrowAt:f.borrowed?today():'',format:f.format,category:formCat(f),publisher:(f.publisher||'').trim(),isbn:cleanIsbn(f.isbn),cover:f.cover||'',rating:0,review:'',summary:'',quotes:[],color:f.color,createdAt:Date.now()};
+  if(f.id){const b={...S.books[f.id],title:f.title.trim(),author:f.author.trim(),pages,color:f.color,owned:f.owned,isSummary:!!f.isSummary,lent:!!f.lent,lentTo:f.lent?(f.lentTo||'').trim():'',lentDue:f.lent?(f.lentDue||''):'',lentAt:f.lent?(S.books[f.id].lentAt||today()):'',borrowed:!!f.borrowed,borrowFrom:f.borrowed?(f.borrowFrom||'').trim():'',borrowDue:f.borrowed?(f.borrowDue||''):'',borrowAt:f.borrowed?(S.books[f.id].borrowAt||today()):'',format:f.format,category:formCat(f),cover:f.cover||'',isbn:cleanIsbn(f.isbn).toUpperCase(),publisher:(f.publisher||'').trim()};if(b.isbn!==S.books[f.id].isbn)delete b.isbnRaw;if(b.current>pages&&pages)b.current=pages;putBook(b);closeForm();renderAll();toast('저장했어요');return}
+  const b={id:uid(),title:f.title.trim(),author:f.author.trim(),pages,current:0,status:'want',owned:f.owned,isSummary:!!f.isSummary,lent:!!f.lent,lentTo:f.lent?(f.lentTo||'').trim():'',lentDue:f.lent?(f.lentDue||''):'',lentAt:f.lent?today():'',borrowed:!!f.borrowed,borrowFrom:f.borrowed?(f.borrowFrom||'').trim():'',borrowDue:f.borrowed?(f.borrowDue||''):'',borrowAt:f.borrowed?today():'',format:f.format,category:formCat(f),publisher:(f.publisher||'').trim(),isbn:cleanIsbn(f.isbn).toUpperCase(),cover:f.cover||'',rating:0,review:'',summary:'',quotes:[],color:f.color,createdAt:Date.now()};
   setStatus(b,f.status);putBook(b);closeForm();renderAll();toast('책을 추가했어요');
 }
 function setStatus(b,s){b.status=s;
@@ -1461,8 +1464,19 @@ document.addEventListener('input',e=>{if(e.target.id==='pdrange')pdSync(+e.targe
 
 /* ---------- fill missing page counts / sharpen covers for the whole shelf ---------- */
 /* ISBN-10 and ISBN-13 of the same book compare equal */
-function isbn13(v){v=cleanIsbn(v).toUpperCase();if(v.length!==10)return v;const b='978'+v.slice(0,9);let s=0;for(let i=0;i<12;i++)s+=(+b[i])*(i%2?3:1);return b+((10-s%10)%10)}
-const isbnEq=(a,b)=>!!a&&!!b&&isbn13(a)===isbn13(b);
+/* ISBN rule (1.12.2): store 13 digits without hyphens; the value before conversion is kept in isbnRaw.
+   A 10-digit ISBN becomes 978 + first 9 digits + new check digit. 979 books have no real ISBN-10, but some
+   exports cut Korean 979-11 ISBNs to 10 digits (e.g. 1185952276 = 979-11-85952-27-7). So a 10-digit ISBN
+   starting with 11 is read as 979-11 when the title is Korean (Korean 978 books start with 89), else as 978;
+   lookups try the other reading too. */
+function isbnPre(v,p){v=cleanIsbn(v).toUpperCase();if(v.length!==10)return v;const b=p+v.slice(0,9);let s=0;for(let i=0;i<12;i++)s+=(+b[i])*(i%2?3:1);return b+((10-s%10)%10)}
+const isbn13=v=>isbnPre(v,'978');
+function isbnCands(v,t){v=cleanIsbn(v).toUpperCase();if(!v)return [];if(v.length!==10)return [v];const a=isbnPre(v,'978');if(!/^11/.test(v))return [a];const b=isbnPre(v,'979');return /[가-힣]/.test(t||'')?[b,a]:[a,b]}
+const normIsbn=(v,t)=>isbnCands(v,t)[0]||'';
+/* every reading of a book's ISBN, including the one it had before conversion */
+const bookCands=b=>[...new Set([...isbnCands(b.isbn,b.title),...isbnCands(b.isbnRaw,b.title)])];
+const isbnEq=(a,b)=>{if(!a||!b)return false;const x=isbnCands(a);return isbnCands(b).some(c=>x.includes(c))};
+function normBookIsbn(b){if(!b||!b.isbn)return false;const n=normIsbn(b.isbn,b.title);if(!n||n===b.isbn)return false;if(!b.isbnRaw)b.isbnRaw=b.isbn;b.isbn=n;return true}
 /* rough cover quality: YES24 L > Open Library L > other > Google / Open Library M > Kakao thumbnail; uploaded covers are never replaced */
 function coverRank(u){u=String(u||'');if(!u)return 0;if(/firebasestorage|^data:/.test(u))return 9;if(/image\.yes24\.com/.test(u))return 5;if(/openlibrary\.org.*-L\.jpg/.test(u))return 4;if(/books\.google|openlibrary\.org/.test(u))return 2;if(/kakaocdn|daumcdn/.test(u))return 1;return 3}
 const needPages=()=>Object.values(S.books).filter(b=>!b.pages);
@@ -1471,13 +1485,14 @@ const upOn=()=>S.bulkUp!==false;
 const needCovers=()=>Object.values(S.books).filter(b=>{const r=coverRank(b.cover);return r<=2||(r===9&&upOn())});
 /* an image is usable when it loads and is at least 200px wide (filters out tiny placeholders) */
 function imgOk(u){return new Promise(res=>{if(!u)return res(false);const i=new Image();const t=setTimeout(()=>res(false),8000);i.onload=()=>{clearTimeout(t);res(i.naturalWidth>=200)};i.onerror=()=>{clearTimeout(t);res(false)};i.src=u})}
-async function lookupBook(isbn,want){const out={pages:0,cover:''};const i13=isbn13(isbn);
-  if(srcOn('yes24')){try{const y=await searchYes24(i13,true);const hit=y.find(r=>isbnEq(r.isbn,isbn));if(hit){out.pages=hit.pages||0;out.cover=hit.cover||''}}catch(e){if(e&&e.code==='functions/resource-exhausted')S.bulk&&(S.bulk.quota=true);else logError('bulk-yes24',e.message)}}
-  if(want==='pages'&&!out.pages){for(let t=0;t<2&&!out.pages;t++){try{const g=await searchGoogle('isbn:'+isbn);out.pages=(g.find(r=>r.pages)||{}).pages||0;break}catch(e){if(/429/.test(e.message)&&t===0){await new Promise(r=>setTimeout(r,4000))}else break}}}
-  if(want==='pages'&&!out.pages){try{const o=await searchOpenLib(isbn,true);out.pages=(o.find(r=>r.pages)||{}).pages||0}catch(e){}}
-  if(want==='covers'){if(out.cover&&!(await imgOk(out.cover)))out.cover='';if(!out.cover){const ol=`https://covers.openlibrary.org/b/isbn/${i13}-L.jpg?default=false`;if(await imgOk(ol))out.cover=ol}}
+async function lookupBook(bk,want){const out={pages:0,cover:'',isbn:''};const cands=typeof bk==='string'?isbnCands(bk):bookCands(bk);
+  if(srcOn('yes24')){for(const c of cands){if(S.bulk&&S.bulk.quota)break;try{const y=await searchYes24(c,true);const hit=y.find(r=>isbnEq(r.isbn,c));if(hit){out.pages=hit.pages||0;out.cover=hit.cover||'';out.isbn=c;break}}catch(e){if(e&&e.code==='functions/resource-exhausted')S.bulk&&(S.bulk.quota=true);else logError('bulk-yes24',e.message);break}}}
+  const ci=out.isbn?[out.isbn]:cands;
+  if(want==='pages'&&!out.pages){for(const c of ci){let got=false;for(let t=0;t<2;t++){try{const g=await searchGoogle('isbn:'+c);const h=g.find(r=>r.pages);if(h){out.pages=h.pages;out.isbn=out.isbn||c}got=true;break}catch(e){if(/429/.test(e.message)&&t===0){await new Promise(r=>setTimeout(r,4000))}else break}}if(out.pages||!got)break}}
+  if(want==='pages'&&!out.pages){for(const c of ci){try{const o=await searchOpenLib(c,true);const h=o.find(r=>r.pages);if(h){out.pages=h.pages;out.isbn=out.isbn||c;break}}catch(e){break}}}
+  if(want==='covers'){if(out.cover&&!(await imgOk(out.cover)))out.cover='';if(!out.cover){for(const c of ci){const ol=`https://covers.openlibrary.org/b/isbn/${c}-L.jpg?default=false`;if(await imgOk(ol)){out.cover=ol;out.isbn=out.isbn||c;break}}}}
   return out}
-async function lookupPages(isbn){return (await lookupBook(isbn,'pages')).pages}
+async function lookupPages(b){return (await lookupBook(b,'pages')).pages}
 const BULK={pages:{title:'쪽수 한꺼번에 채우기',list:needPages},covers:{title:'표지 선명하게 바꾸기',list:needCovers}};
 function bulkHTML(){const k=S.bulk,mode=S.bulkMode||'pages',M=BULK[mode],list=M.list(),withIsbn=list.filter(b=>b.isbn).length,en=lang()==='en';
   if(!k)return `<div class="wcard" role="dialog" aria-modal="true"><h3>${M.title}</h3><p>${mode==='pages'?(en?`<b>${list.length}</b> books have no page count. The <b>${withIsbn}</b> with an ISBN will be looked up.`:`쪽수가 없는 책 <b>${list.length}권</b> 중 ISBN이 있는 <b>${withIsbn}권</b>을 찾아볼게요.`):(en?`<b>${list.length}</b> books have a small or missing cover. The <b>${withIsbn}</b> with an ISBN will be looked up.`:`표지가 작거나 없는 책 <b>${list.length}권</b> 중 ISBN이 있는 <b>${withIsbn}권</b>을 찾아볼게요.`)}</p>
@@ -1485,13 +1500,14 @@ function bulkHTML(){const k=S.bulk,mode=S.bulkMode||'pages',M=BULK[mode],list=M.
     <div class="hbtns"><button class="btn ghost small" data-action="pdclose">닫기</button><button class="btn small" data-action="bulkgo" ${withIsbn?'':'disabled'}>찾기 시작</button></div></div>`;
   const pc=k.total?Math.round(k.i/k.total*100):100;
   return `<div class="wcard" role="dialog" aria-modal="true"><h3>${M.title}</h3><div class="bar" style="--c:var(--accent)"><i style="width:${pc}%"></i></div>
-    <p>${en?`<b>${k.i} / ${k.total}</b> checked · ${mode==='pages'?'found':'updated'} <b>${k.found}</b> · not found <b>${k.miss}</b>`:`<b>${k.i} / ${k.total}</b>권 확인 · ${mode==='pages'?'찾음':'바꿈'} <b>${k.found}</b> · 못 찾음 <b>${k.miss}</b>`}</p>
+    <p>${en?`<b>${k.i} / ${k.total}</b> checked · ${mode==='pages'?'found':'updated'} <b>${k.found}</b> · not found <b>${k.miss}</b>`:`<b>${k.i} / ${k.total}</b>권 확인 · ${mode==='pages'?'찾음':'바꿈'} <b>${k.found}</b> · 못 찾음 <b>${k.miss}</b>`}${k.fixed?(en?` · ISBN corrected <b>${k.fixed}</b>`:` · ISBN 바로잡음 <b>${k.fixed}</b>`):''}</p>
     ${k.quota?'<p class="hint">오늘 예스24 조회 한도를 다 써서 나머지는 Google과 Open Library에서만 찾았어요. 내일 다시 하면 예스24에서 더 찾을 수 있어요.</p>':''}
     ${k.done?`<p class="hint">${k.stopped?'중간에 멈췄어요. 다시 시작하면 남은 책부터 찾아요.':'다 끝났어요.'}</p><div class="hbtns">${mode==='covers'&&k.changed&&k.changed.length?'<button class="btn ghost small" data-action="bulkundo">바꾼 표지 되돌리기</button>':''}<button class="btn small" data-action="pdclose">확인</button></div>`:'<div class="hbtns"><button class="btn ghost small" data-action="bulkstop">멈추기</button></div>'}</div>`}
 function renderBulk(){dlgEl().innerHTML=tr(bulkHTML())}
 function openBulk(mode){S.bulk=null;S.bulkMode=mode||'pages';renderBulk();dlgEl().classList.add('show')}
 async function runBulk(){const mode=S.bulkMode||'pages',list=BULK[mode].list().filter(b=>b.isbn);S.bulk={i:0,total:list.length,found:0,miss:0,quota:false,stop:false,done:false,changed:[]};renderBulk();
-  for(const b of list){if(!S.bulk||S.bulk.stop)break;const r=await lookupBook(b.isbn,mode).catch(()=>({pages:0,cover:''}));const k=S.bulk;if(!k)return;k.i++;const cur=S.books[b.id];
+  for(const b of list){if(!S.bulk||S.bulk.stop)break;const r=await lookupBook(b,mode).catch(()=>({pages:0,cover:'',isbn:''}));const k=S.bulk;if(!k)return;k.i++;const cur=S.books[b.id];
+    if(cur&&r.isbn&&r.isbn!==cur.isbn){if(!cur.isbnRaw)cur.isbnRaw=cur.isbn;cur.isbn=r.isbn;k.fixed=(k.fixed||0)+1;if(!(mode==='pages'?r.pages&&!cur.pages:r.cover))putBook(cur)}
     if(mode==='pages'){const n=r.pages;if(n&&cur&&!cur.pages){const p=cur.pctOnly;cur.pages=n;if(p!=null){cur.current=Math.round(p*n/100);delete cur.pctOnly}else if(cur.status==='done')cur.current=n;putBook(cur);k.found++}else k.miss++}
     else{const cr=cur?coverRank(cur.cover):0;if(r.cover&&cur&&(coverRank(r.cover)>cr||(cr===9&&upOn()))){k.changed.push([cur.id,cur.cover||'']);cur.coverPrev=cur.cover||'';cur.cover=r.cover;putBook(cur);k.found++}else k.miss++}
     renderBulk();await new Promise(r=>setTimeout(r,700))}
@@ -1727,7 +1743,7 @@ document.addEventListener('click',e=>{
     case 'pdsave':pdSave();break;
     case 'pdclose':if(S.bulk&&!S.bulk.done){S.bulk.stop=true}closeDlg();break;
     case 'pdtotal':{const b=S.pd&&S.books[S.pd.id];const n=parseInt(($('#pdtotal')||{}).value)||0;if(b&&n>0)pdSetPages(b,n);else toast('전체 쪽수를 입력해 주세요');break}
-    case 'pdfind':{const b=S.pd&&S.books[S.pd.id];if(!b)break;t.disabled=true;lookupPages(b.isbn).then(n=>{if(n)pdSetPages(b,n);else{toast('쪽수를 찾지 못했어요. 직접 입력해 주세요');t.disabled=false}});break}
+    case 'pdfind':{const b=S.pd&&S.books[S.pd.id];if(!b)break;t.disabled=true;lookupPages(b).then(n=>{if(n)pdSetPages(b,n);else{toast('쪽수를 찾지 못했어요. 직접 입력해 주세요');t.disabled=false}});break}
     case 'bulkopen':openBulk(t.dataset.v);break;
     case 'bulkundo':bulkUndo();break;
     case 'bulkup':S.bulkUp=t.checked;renderBulk();break;
@@ -2122,7 +2138,7 @@ async function mbsFindCover(b){const isb=cleanIsbn(b.isbn),t=x=>String(x||'').to
   const tries=isb?[['kakao',()=>searchKakao(isb,true)],['yes24',()=>searchYes24(isb)],['google',()=>searchGoogle('isbn:'+isb)],['openlib',()=>searchOpenLib(isb,true)]]
     :[['kakao',()=>searchKakao(b.title,false)],['yes24',()=>searchYes24(b.title)],['google',()=>searchGoogle(b.title,/[가-힣]/.test(b.title)?'ko':'')]];
   for(const [k,fn] of tries){if(k!=='openlib'&&!srcOn(k))continue;try{const rs=(await fn())||[];
-      const hit=rs.find(r=>r.cover&&(isb?cleanIsbn(r.isbn)===isb||rs.length===1:t(r.title)===t(b.title)))||(isb?rs.find(r=>r.cover):null);
+      const hit=rs.find(r=>r.cover&&(isb?isbnEq(r.isbn,isb)||rs.length===1:t(r.title)===t(b.title)))||(isb?rs.find(r=>r.cover):null);
       if(hit&&hit.cover)return hit.cover}catch(e){}}
   return ''}
 async function mbsFillCovers(){if(mbsCoverBusy)return;mbsCoverBusy=true;let n=0;

@@ -1,16 +1,18 @@
 {
-  "version": "1.12.1",
-  "build": 114,
+  "version": "1.12.3",
+  "build": 116,
   "notes": {
     "ko": [
-      "ISBN이 10자리로 저장된 책도 예스24에서 쪽수를 찾을 수 있게 고쳤어요. '쪽수 한꺼번에 채우기'를 다시 해 보세요.",
-      "같은 책이 여러 곳에서 검색되면 더 선명한 표지(예스24 큰 표지 우선)를 골라요.",
-      "설정 > 책 검색의 '표지 선명하게 바꾸기'로 작은 표지를 큰 표지로 한 번에 바꿀 수 있어요. 직접 올린 표지도 바꿀 수 있고(끌 수 있음), 끝난 뒤 되돌릴 수도 있어요."
+      "책 형식을 정리했어요. 형식이 비어 있던 책은 종이북으로, 요약본은 모두 앱북으로 바뀌어요.",
+      "ISBN을 13자리로 통일해 저장해요. 10자리로 저장된 책은 앱을 열 때 자동으로 13자리로 바뀌고, 원래 값은 따로 보관돼요.",
+      "10자리로 잘려 저장된 국내서(979-11)도 올바른 ISBN으로 찾아요. '쪽수 한꺼번에 채우기'와 '표지 선명하게 바꾸기'를 다시 해 보세요.",
+      "일괄 작업 중 다른 ISBN으로 책을 찾으면 그 책의 ISBN도 바로잡아요."
     ],
     "en": [
-      "Books saved with a 10-digit ISBN can now get their page count from YES24. Try 'Fill in page counts' again.",
-      "When a book is found in several places, the sharper cover is chosen (YES24 large cover first).",
-      "Use 'Sharpen covers' in Settings > Book search to replace small covers with large ones at once. Covers you uploaded can be included (optional), and you can undo it afterwards."
+      "Book formats are filled in: books with no format become Paper, and all summaries become App books.",
+      "ISBNs are now stored as 13 digits. Books saved with a 10-digit ISBN are converted when you open the app, and the original value is kept.",
+      "Korean books whose 979-11 ISBN was cut to 10 digits are now found correctly. Try 'Fill in page counts' and 'Sharpen covers' again.",
+      "If a bulk run finds a book under its other ISBN reading, the book's ISBN is corrected too."
     ]
   }
 }
