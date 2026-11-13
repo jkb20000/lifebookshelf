@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b122">
+<link rel="manifest" href="manifest.webmanifest?b124">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b122">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b122">
+<link rel="apple-touch-icon" href="icon-180.png?b124">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b124">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -459,7 +459,7 @@ textarea.note{display:block;width:100%;min-height:180px;border:1px solid var(--l
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.act{pointer-events:auto}.toast .tact{margin-left:6px;background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:2px 4px}
 section.cat.uncat{border-left:4px solid var(--accent);padding-left:10px;border-radius:4px}section.cat.uncat .cath{align-items:center}.ucic{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;margin-right:6px;flex:none}.ucbadge{font-style:normal;font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 8px;margin-left:8px}
-section.cat.emptycat .emptyhint{margin:0;padding:22px 16px;border:1px dashed var(--line);border-radius:12px;text-align:center}
+section.cat.emptycat .emptyhint{margin:0;padding:10px 16px;border:1px dashed var(--line);border-radius:12px;text-align:center}
 section.cat.mbs-hov{outline:3px dashed var(--accent);outline-offset:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent)}
 .sync{font-size:11px;color:var(--muted);text-align:center;padding:18px 0 0}
 .hbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex:1;min-width:0}
@@ -730,7 +730,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.12.9',APP_BUILD_NO=122,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.13.1',APP_BUILD_NO=124,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -968,13 +968,14 @@ function tileHTML(b,mixed){const p=pct(b),nw=S._recentSec&&isNew(b),nb=!S._recen
 const shelfPer=()=>innerWidth>=1400?8:innerWidth>=1024?7:innerWidth>=700?5:3;
 function sectionHTML(key,name,books,mixed,pre){if(pre)return trayHTML(key,name,books);
   /* the Uncategorized shelf is always shown, also empty, so books can be found and dropped there (1.12.8) */
-  if(!books.length)return `<section class="cat emptycat uncat" data-cat="${encodeURIComponent(key)}"><div class="cath"><svg class="ucic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg><h2>${esc(trText(name))}</h2><span>0권</span></div><p class="hint emptyhint">분류를 정하지 않은 책이 여기에 꽂혀요.</p></section>`;S._recentSec=key==='__recent';const per=shelfPer(),pages=[];for(let i=0;i<books.length;i+=per)pages.push(books.slice(i,i+per));
+  if(!books.length)return `<section class="cat emptycat uncat dropstrip" data-cat="${encodeURIComponent(key)}"><div class="cath"><svg class="ucic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg><h2>${esc(trText(name))}</h2><span>0권</span></div><p class="hint emptyhint">여기에 놓으면 분류 없이 꽂혀요.</p></section>`;S._recentSec=key==='__recent';const per=shelfPer(),pages=[];for(let i=0;i<books.length;i+=per)pages.push(books.slice(i,i+per));
   const dots=pages.length<=1?'':`<div class="dots"><div class="dwrap"><div class="dtrack">${pages.map((_,i)=>`<button class="dot${i===0?' on':''}${i>14?' far':''}" data-action="dot" data-i="${i}" aria-label="${i+1}/${pages.length}"></button>`).join('')}</div></div>${pages.length>16?`<span class="dn"><b>1</b>/${pages.length}</span>`:''}</div>`;
   const uc=key==='미분류';
   return `<section class="cat${pre?' pre':''}${uc?' uncat':''}" data-cat="${encodeURIComponent(key)}"><div class="cath">${uc?'<svg class="ucic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>':''}<h2>${esc(uc?trText(name):name)}</h2><span>${books.length}권</span>${uc?'<em class="ucbadge">분류 정하기</em>':''}${pre?'<em>서재 입고 전</em>':''}</div>
     <div class="wood" data-pages="${pages.length}" style="--per:${per}">${pages.map(r=>`<div class="srow">${r.map(b=>tileHTML(b,mixed)).join('')}</div>`).join('')}</div>${dots}</section>`}
 const isNew=b=>(!b.source||b.source==='GMDLibrary')&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
-const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||(b.createdAt||0)-(a.createdAt||0);
+const freshAt=b=>Math.max(b.createdAt||0,b.startedAt?Date.parse(b.startedAt)||0:0);
+const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||freshAt(b)-freshAt(a);
 function groupByCat(books){const m=new Map();books.forEach(b=>{const c=(b.category||'').trim()||'미분류';if(!m.has(c))m.set(c,[]);m.get(c).push(b)});
   return [...m.entries()].sort((a,b)=>a[0]==='미분류'?-1:b[0]==='미분류'?1:a[0].localeCompare(b[0],'ko')).map(([c,bs])=>[c,bs.sort(sortIn)])}
 function dashHTML(){let open=false;try{open=localStorage.getItem('lifebookshelf.dash')==='1'}catch(e){}
@@ -982,7 +983,7 @@ function dashHTML(){let open=false;try{open=localStorage.getItem('lifebookshelf.
   const bk=backupCardHTML();
   return `<section class="dash${open?' open':''}"><button class="dashh" data-action="dash" aria-expanded="${open}"><span class="dmini" style="--p:${Math.round(p*100)}%"></span><span class="dsum"><b>올해 ${doneThisYear().length} / ${S.settings.goal}권</b><i>${v}${u} / ${c.target}${u}</i><i>${st}일 연속</i></span>${bk&&!open?'<em class="dbk">백업 필요</em>':''}<span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
     ${open?`<div class="dashb">${bk}${todayCardHTML()}${quoteCardHTML()}</div>`:''}</section>`}
-Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','분류 정하기':'Needs a category','분류를 정하지 않은 책이 여기에 꽂혀요.':'Books without a category are shelved here.','표지 선명하게 바꾸기':'Sharpen covers','바꾼 표지 되돌리기':'Undo cover changes','예스24 큰 표지를 먼저 찾고, 없으면 Open Library 큰 표지를 써요. 끝난 뒤 한 번에 되돌릴 수 있어요.':'Looks for the large YES24 cover first, then the large Open Library cover. You can undo all changes at the end.','직접 올린 표지도 바꾸기':'Also replace covers I uploaded','어디까지 읽었는지 막대를 끌어 맞춰 주세요':'Drag the bar to where you stopped reading','끝까지':'To the end','전체 쪽수를 모르면 퍼센트로 기록돼요. 쪽수를 넣으면 쪽 단위로 바뀌어요.':'Without a page count, progress is kept as a percent. Add the page count to switch to pages.','전체 쪽수':'Total pages','쪽수 찾기':'Find pages','전체 쪽수를 모르면 퍼센트로 기록돼요. ':'Without a page count, progress is kept as a percent. ','쪽수 넣기':'Add page count','쪽수 모름':'Pages unknown','진도 조정':'Adjust progress','전체 쪽수를 입력해 주세요':'Please enter the total pages','쪽수를 찾지 못했어요. 직접 입력해 주세요':'Page count not found. Please enter it',
+Object.assign(EN_STR,{'백업 필요':'Backup due','▶ 읽기':'▶ Read','분류 정하기':'Needs a category','여기에 놓으면 분류 없이 꽂혀요.':'Drop here to shelve without a category.','표지 선명하게 바꾸기':'Sharpen covers','바꾼 표지 되돌리기':'Undo cover changes','예스24 큰 표지를 먼저 찾고, 없으면 Open Library 큰 표지를 써요. 끝난 뒤 한 번에 되돌릴 수 있어요.':'Looks for the large YES24 cover first, then the large Open Library cover. You can undo all changes at the end.','직접 올린 표지도 바꾸기':'Also replace covers I uploaded','어디까지 읽었는지 막대를 끌어 맞춰 주세요':'Drag the bar to where you stopped reading','끝까지':'To the end','전체 쪽수를 모르면 퍼센트로 기록돼요. 쪽수를 넣으면 쪽 단위로 바뀌어요.':'Without a page count, progress is kept as a percent. Add the page count to switch to pages.','전체 쪽수':'Total pages','쪽수 찾기':'Find pages','전체 쪽수를 모르면 퍼센트로 기록돼요. ':'Without a page count, progress is kept as a percent. ','쪽수 넣기':'Add page count','쪽수 모름':'Pages unknown','진도 조정':'Adjust progress','전체 쪽수를 입력해 주세요':'Please enter the total pages','쪽수를 찾지 못했어요. 직접 입력해 주세요':'Page count not found. Please enter it',
 '쪽수 한꺼번에 채우기':'Fill in page counts','찾기 시작':'Start','멈추기':'Stop','다 끝났어요.':'All done.','중간에 멈췄어요. 다시 시작하면 남은 책부터 찾아요.':'Stopped. Start again to continue with the rest.',
 '예스24, Google Books, Open Library 순서로 ISBN을 찾아요. ISBN이 없는 ':'Looks up each ISBN on YES24, Google Books, then Open Library. The ','권은 책 화면에서 직접 넣거나 ISBN을 추가해 주세요. 진도를 퍼센트로 기록한 책은 쪽수가 채워지면 쪽 단위로 바뀌어요.':' books without an ISBN need the page count or ISBN added on their own screen. Books tracked in percent switch to pages once filled.',
 '오늘 예스24 조회 한도를 다 써서 나머지는 Google과 Open Library에서만 찾았어요. 내일 다시 하면 예스24에서 더 찾을 수 있어요.':'Today\'s YES24 limit was reached, so the rest were checked on Google and Open Library only. Try again tomorrow to find more on YES24.','이번 버전에서 바뀐 점':'What\'s new in this version','업데이트 확인':'Check for updates','지금 업데이트':'Update now','최신 버전이에요':'You have the latest version','업데이트하는 중이에요':'Updating','입력하던 화면을 닫은 뒤 업데이트해 주세요':'Close the screen you are editing, then update','이 버전의 변경 내용을 불러오지 못했어요.':'Could not load the changes for this version.','확인했어요':'Got it','나중에':'Later','카카오 책과 예스24는 이메일 인증을 마치면 쓸 수 있어요. 설정 > 계정에서 인증 완료를 눌러 주세요.':'Kakao Books and YES24 are available after you verify your email. Tap I\'ve verified in Settings > Account.','로그인':'Sign in','회원가입':'Sign up','이메일로 가입하기':'Sign up with email','Google로 가입':'Sign up with Google','비밀번호 (6자 이상)':'Password (6+ characters)','비밀번호 확인':'Confirm password','비밀번호를 잊으셨나요?':'Forgot your password?',
@@ -1004,7 +1005,8 @@ function vShelf(){
   const rchips=[['','모든 평점'],['5','★★★★★'],['4','★★★★'],['3','★★★'],['2','★★'],['1','★'],['none','평점 없음']]
     .map(([k,l])=>`<button class="chip${k&&k!=='none'?' star':''}" data-action="rfilter" data-f="${k}" aria-pressed="${k===''?!rs.size:rs.has(k)}">${l}${k?` ${all.filter(b=>starOf(b)===k).length}`:''}</button>`).join('');
   const bs=all.filter(b=>rfok(b)&&stOk(b)&&(!sq||b.title.toLowerCase().includes(sq)||(b.author||'').toLowerCase().includes(sq)||(b.category||'').toLowerCase().includes(sq)));
-  const reading=all.filter(b=>b.status==='reading');
+  /* newest first: a book counts as new from when it was added or (re)started, whichever is later (1.13.0) */
+  const reading=all.filter(b=>b.status==='reading').sort((a,b)=>freshAt(b)-freshAt(a));
   const chips=[['all','전체'],['reading','읽는 중'],['want','Wishlist'],['summary','요약본'],['done','다 읽음'],['unread','안 읽음'],['owned','소장'],['lent','빌려줌'],['borrowed','빌려옴']]
     .map(([k,l])=>`<button class="chip" data-action="filter" data-f="${k}" aria-pressed="${k==='all'?!fs.size:fs.has(k)}">${l} ${k==='all'?all.length:all.filter(b=>k==='owned'?b.owned:k==='lent'?b.lent:k==='borrowed'?b.borrowed:k==='summary'?b.isSummary:b.status===k).length}</button>`).join('');
   const cont=reading.length&&f==='all'&&!sq&&!rs.size&&!S.selMode?`<div class="cath"><h2>읽는 중</h2><span>${reading.length}권</span></div><div class="cont">${reading.map(b=>`
@@ -1019,10 +1021,10 @@ function vShelf(){
   let body='';
   if(!bs.length)body=`<div class="empty"><p>${all.length?'이 칸은 아직 비어 있어요':'첫 책을 꽂아보세요'}</p>${all.length?'':'<div class="hbtns" style="justify-content:center"><button class="btn" data-action="add">책 추가</button></div><p class="hint" style="margin-top:10px">검색으로 한 권씩 추가하거나, Goodreads 같은 다른 앱의 백업 파일로 한꺼번에 가져올 수 있어요.</p>'}</div>`;
   else if(f==='all'&&!sq&&!rs.size){const wish=bs.filter(b=>b.status==='want').sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    const rest=bs.filter(b=>b.status!=='want'&&b.status!=='reading'),summ=rest.filter(b=>b.isSummary).sort(sortIn);
+    const rest=bs.filter(b=>b.status!=='want'),summ=rest.filter(b=>b.isSummary).sort(sortIn);
     const recent=bs.filter(isNew).sort((a,b)=>b.createdAt-a.createdAt);
     body=(recent.length&&!S.selMode?recentHTML(recent):'')+(wish.length?sectionHTML('__wish','Wishlist',wish,false,true):'')+(summ.length?sectionHTML('__summary','요약본',summ,false,true):'')
-      +(g=>g.length?`<div class="shelfdiv" role="separator"></div><div class="cath shelfh"><svg class="trayic" viewBox="0 0 24 24"><path d="M4 4v16M8 6v14M12 4v16M16.5 5.5l3.5 14"/><path d="M2 20.5h20"/></svg><h2>내 서재</h2><span>${g.reduce((n,[,x])=>n+x.length,0)}권</span></div>`+g.map(([c,x])=>sectionHTML(c,c,x,false)).join(''):'')((g=>g.some(([c])=>c==='미분류')?g:[['미분류',[]],...g])(groupByCat(rest.filter(b=>!b.isSummary))))}
+      +(g=>g.length?`<div class="shelfdiv" role="separator"></div><div class="cath shelfh"><svg class="trayic" viewBox="0 0 24 24"><path d="M4 4v16M8 6v14M12 4v16M16.5 5.5l3.5 14"/><path d="M2 20.5h20"/></svg><h2>내 서재</h2><span>${g.reduce((n,[,x])=>n+x.length,0)}권</span></div>`+g.map(([c,x])=>sectionHTML(c,c,x,false)).join(''):'')((g=>g.some(([c])=>c==='미분류')||!S.dragIn?g:[['미분류',[]],...g])(groupByCat(rest.filter(b=>!b.isSummary))))}
   else body=groupByCat(bs).map(([c,x])=>sectionHTML(c,c,x,f!=='want',f==='want'||f==='summary')).join('');
   const sOpen=S.sopen||!!S.sq,rOpen=S.ropen||rs.size>0;
   return `${bulkBarHTML()}<div class="fzone" role="search">
@@ -2247,6 +2249,8 @@ function mbsShow(ids){if(ids.length===1&&S.books[ids[0]]){openBook(ids[0]);retur
 /* the shelf under a point or element: {key,label}; key '' when it is not on a category shelf */
 function mbsDropAt(el){const sec=el&&el.closest&&el.closest('section.cat[data-cat]');if(!sec)return {key:'',label:''};let k=sec.dataset.cat;try{k=decodeURIComponent(k)}catch(e){}/* encoded so the English-mode text swap cannot rename it */
   return {key:k,label:k==='__wish'?'Wishlist':k==='__summary'?'요약본':k}}
+/* while a book is dragged in, the empty Uncategorized shelf appears as a slim drop strip (1.13.1) */
+let dragT;function setDragIn(on){clearTimeout(dragT);if(on)dragT=setTimeout(()=>setDragIn(false),2500);if(!!S.dragIn===on)return;S.dragIn=on;renderMain()}
 const mbsPoint=(x,y)=>x==null||y==null?null:document.elementFromPoint(+x,+y);
 function mbsHover(el){document.querySelectorAll('section.cat.mbs-hov').forEach(n=>{if(!el||!el.closest||n!==el.closest('section.cat'))n.classList.remove('mbs-hov')});
   const sec=el&&el.closest&&el.closest('section.cat[data-cat]');if(sec)sec.classList.add('mbs-hov');return mbsDropAt(el)}
@@ -2274,15 +2278,15 @@ const mbsStatus=()=>({type:'mbs:status',signedIn:mbsSigned(),app:APP_VERSION+' (
 window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:ping')return;if(e.source)e.source.postMessage(mbsStatus(),e.origin)});
 (()=>{const o=mbsParent();if(!o||window.parent===window)return;let last=null;const tick=()=>{const v=mbsSigned();if(v!==last){last=v;window.parent.postMessage(mbsStatus(),o)}};setTimeout(tick,800);setInterval(tick,1500)})();
 const mbsTypes=e=>[...((e.dataTransfer&&e.dataTransfer.types)||[])];
-document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop');mbsHover(e.target)});
-document.addEventListener('dragleave',e=>{if(!e.relatedTarget){document.body.classList.remove('mbs-drop');mbsHover(null)}});
+document.addEventListener('dragover',e=>{if(!mbsTypes(e).includes('text/plain'))return;if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.body.classList.add('mbs-drop');setDragIn(true);mbsHover(e.target)});
+document.addEventListener('dragleave',e=>{if(!e.relatedTarget){document.body.classList.remove('mbs-drop');mbsHover(null);setDragIn(false)}});
 document.addEventListener('drop',e=>{document.body.classList.remove('mbs-drop');mbsHover(null);const books=mbsParse(e.dataTransfer&&e.dataTransfer.getData('text/plain'));if(!books)return;e.preventDefault();
-  const r=mbsTakeBooks(books,mbsDropAt(e.target)),o=mbsParent();if(o&&window.parent!==window)window.parent.postMessage({type:'mbs:added',...r},o)});
+  const r=mbsTakeBooks(books,mbsDropAt(e.target));setDragIn(false);const r2=r,o=mbsParent();if(o&&window.parent!==window)window.parent.postMessage({type:'mbs:added',...r},o)});
 window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:add')return;const at=e.data.at;
   let drop=null;if(at&&typeof at==='object'){drop=mbsDropAt(mbsPoint(at.x,at.y));mbsHover(null)}
-  const r=mbsTakeBooks(e.data.books,drop);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
+  const r=mbsTakeBooks(e.data.books,drop);setDragIn(false);if(e.source)e.source.postMessage({type:'mbs:added',...r},e.origin)});
 /* GMDLibrary sends the pointer position while dragging over this frame; highlight the shelf and say which one it is */
-window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:hover')return;const d=mbsHover(mbsPoint(e.data.x,e.data.y));
+window.addEventListener('message',e=>{if(!MBS_IN_ORIGINS.includes(e.origin)||!e.data||e.data.type!=='mbs:hover')return;setDragIn(e.data.x!=null);const d=mbsHover(mbsPoint(e.data.x,e.data.y));
   if(e.source&&e.data.x!=null)e.source.postMessage({type:'mbs:hovered',category:d.label},e.origin)});
 Object.assign(EN_STR,{'이미 서재에 있는 책이에요':'Already on your shelf','복사할 책이 없어요':'Nothing to copy'});
 EN_RX.unshift([/(\d+)권을 서재에 복사했어요/g,'Copied $1 books to your shelf'],[/ \(이미 있는 (\d+)권은 건너뜀\)/g,' ($1 already there, skipped)']);

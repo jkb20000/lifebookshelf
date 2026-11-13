@@ -1,16 +1,22 @@
 {
-  "version": "1.12.9",
-  "build": 122,
+  "version": "1.13.1",
+  "build": 124,
   "notes": {
     "ko": [
-      "서재와 문구 검색창에 한글을 입력할 때 자모가 분리되던 문제를 고쳤어요.",
-      "GMDLibrary에서 '읽고 싶은' 책을 분류 칸에 놓으면 Wishlist가 아니라 그 분류 선반에 등록돼요(안 읽음, 소장).",
-      "'미분류' 선반을 서재 맨 위(첫 분류 앞)에 늘 보여 주고, 태그 아이콘과 '분류 정하기' 표시로 눈에 띄게 했어요. 비어 있어도 보여서 GMDLibrary에서 끌어 놓을 수 있어요."
+      "선반 규칙을 바꿨어요. 다 읽은 책뿐 아니라 읽는 중인 책과 아직 안 읽은 소장 책도 분류 선반에 꽂혀요. 다시 읽기 시작해도 선반에서 빠지지 않아요. Wishlist만 따로 모여요.",
+      "'읽는 중'은 최근에 추가했거나 새로 읽기 시작한 책이 맨 앞에 와요. 선반과 Wishlist도 최근 추가한 책이 앞에 와요.",
+      "공용 북쉘프에서 가져온 책이 '최근 추가'에 보이고, 복사 알림의 [보기]로 바로 열 수 있어요.",
+      "공용 북쉘프에서 책을 원하는 분류 칸이나 Wishlist, 미분류 선반에 끌어 놓으면 그 자리로 들어가요. 끄는 동안 놓을 칸이 강조돼요.",
+      "'미분류' 선반은 서재 맨 위에 보이고 '분류 정하기' 표시가 붙어요. 비어 있으면 숨어 있다가, 공용 북쉘프에서 책을 끄는 동안에만 '여기에 놓으면 분류 없이 꽂혀요' 자리로 나타나요.",
+      "서재와 문구 검색창에서 한글 자모가 분리되던 문제를 고쳤어요."
     ],
     "en": [
-      "Fixed Korean input in the shelf and quote search boxes, where syllables were split into separate letters.",
-      "A wishlist book from GMDLibrary dropped on a category shelf is now shelved there (Unread, Owned) instead of going to the Wishlist.",
-      "The Uncategorized shelf now always sits at the top of My Shelf, marked with a tag icon and a 'Needs a category' badge. It shows even when empty, so you can drop GMDLibrary books on it."
+      "New shelf rule: besides finished books, books you are reading and unread books you own are now on their category shelves, and restarting a book no longer takes it off the shelf. Only the Wishlist is kept apart.",
+      "In Reading, books you added or started most recently come first. Shelves and the Wishlist also put recently added books first.",
+      "Books taken from the shared bookshelf show in Recently added, and the copy notice has a View button.",
+      "Drag a book from the shared bookshelf onto a category shelf, the Wishlist or Uncategorized to put it there; the target is highlighted while you drag.",
+      "The Uncategorized shelf sits at the top of My Shelf with a 'Needs a category' badge. When empty it stays hidden and appears as a slim drop target only while you drag a book from the shared bookshelf.",
+      "Fixed Korean input in the shelf and quote search boxes."
     ]
   }
 }
