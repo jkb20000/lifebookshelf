@@ -1,18 +1,20 @@
 {
-  "version": "1.12.3",
-  "build": 116,
+  "version": "1.12.4",
+  "build": 117,
   "notes": {
     "ko": [
-      "책 형식을 정리했어요. 형식이 비어 있던 책은 종이북으로, 요약본은 모두 앱북으로 바뀌어요.",
-      "ISBN을 13자리로 통일해 저장해요. 10자리로 저장된 책은 앱을 열 때 자동으로 13자리로 바뀌고, 원래 값은 따로 보관돼요.",
-      "10자리로 잘려 저장된 국내서(979-11)도 올바른 ISBN으로 찾아요. '쪽수 한꺼번에 채우기'와 '표지 선명하게 바꾸기'를 다시 해 보세요.",
-      "일괄 작업 중 다른 ISBN으로 책을 찾으면 그 책의 ISBN도 바로잡아요."
+      "설정 > 책 검색에 '제목으로 찾기'를 추가했어요. ISBN이 없거나 쪽수를 못 찾은 종이북과 이북을 제목, 저자, 출판사로 찾아 ISBN, 쪽수, 큰 표지를 채워요.",
+      "판본이 여러 개라 하나로 정할 수 없는 책은 '판본 고르기' 목록에 모아요. 표지와 출판 연도를 보고 직접 고르면 돼요. 끝난 뒤 한 번에 되돌릴 수도 있어요.",
+      "앱북과 오디오북은 쪽수가 있어도 진도를 퍼센트로 기록해요. 통계의 읽은 쪽수와 가장 긴 책에서는 빠져요.",
+      "새로 추가하는 책의 형식은 종이북이 기본이에요.",
+      "ISBN을 13자리로 통일하고, 형식이 비어 있던 책은 종이북, 요약본은 앱북으로 정리했어요."
     ],
     "en": [
-      "Book formats are filled in: books with no format become Paper, and all summaries become App books.",
-      "ISBNs are now stored as 13 digits. Books saved with a 10-digit ISBN are converted when you open the app, and the original value is kept.",
-      "Korean books whose 979-11 ISBN was cut to 10 digits are now found correctly. Try 'Fill in page counts' and 'Sharpen covers' again.",
-      "If a bulk run finds a book under its other ISBN reading, the book's ISBN is corrected too."
+      "Added 'Find by title' in Settings > Book search. Paper books and e-books with no ISBN or page count are looked up by title, author and publisher to fill in the ISBN, page count and a large cover.",
+      "Books with several possible editions are collected in an 'Pick editions' list, where you choose by cover and year. You can undo the whole run afterwards.",
+      "App books and audiobooks are tracked in percent even when the page count is known, and are left out of pages read and longest book in Stats.",
+      "New books are set to Paper by default.",
+      "ISBNs are stored as 13 digits, books with no format became Paper, and summaries became App books."
     ]
   }
 }
