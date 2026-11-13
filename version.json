@@ -1,16 +1,16 @@
 {
-  "version": "1.12.5",
-  "build": 118,
+  "version": "1.12.9",
+  "build": 122,
   "notes": {
     "ko": [
-      "GMDLibrary에서 끌어 놓은 책이 '최근 추가'에 보이고, 복사 알림의 [보기]로 바로 열 수 있어요.",
-      "GMDLibrary에서 책을 원하는 분류 칸에 끌어 놓으면 그 분류로 들어가요. 끄는 동안 놓을 칸이 강조돼요. Wishlist 칸에 놓으면 Wishlist에 담겨요.",
-      "분류 칸이 아닌 곳에 놓으면, 내 분류에 없는 GMDLibrary 분류는 새로 만들지 않고 미분류로 넣어요."
+      "서재와 문구 검색창에 한글을 입력할 때 자모가 분리되던 문제를 고쳤어요.",
+      "GMDLibrary에서 '읽고 싶은' 책을 분류 칸에 놓으면 Wishlist가 아니라 그 분류 선반에 등록돼요(안 읽음, 소장).",
+      "'미분류' 선반을 서재 맨 위(첫 분류 앞)에 늘 보여 주고, 태그 아이콘과 '분류 정하기' 표시로 눈에 띄게 했어요. 비어 있어도 보여서 GMDLibrary에서 끌어 놓을 수 있어요."
     ],
     "en": [
-      "Books dragged in from GMDLibrary show in Recently added, and the copy notice has a View button.",
-      "Drop a book from GMDLibrary on a category shelf to file it there; the shelf is highlighted while you drag. Dropping on Wishlist adds it to the Wishlist.",
-      "Dropped anywhere else, a GMDLibrary category you don't have is not added as a new shelf; the book goes to Uncategorized."
+      "Fixed Korean input in the shelf and quote search boxes, where syllables were split into separate letters.",
+      "A wishlist book from GMDLibrary dropped on a category shelf is now shelved there (Unread, Owned) instead of going to the Wishlist.",
+      "The Uncategorized shelf now always sits at the top of My Shelf, marked with a tag icon and a 'Needs a category' badge. It shows even when empty, so you can drop GMDLibrary books on it."
     ]
   }
 }
