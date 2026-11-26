@@ -3,14 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>/* iOS 26 WebKit draws bottom-fixed bars partway up the screen while the page scrolls (WebKit bug 297779).
+On iPhone and iPad the page scrolls inside <body> instead, so the window itself never scrolls and the tab bar stays put (1.13.2). */
+(function(){var n=navigator;if(/iP(hone|ad|od)/.test(n.userAgent)||(n.platform==='MacIntel'&&n.maxTouchPoints>1))document.documentElement.classList.add('ios')})()</script>
 <title>LifeBookshelf</title>
-<link rel="manifest" href="manifest.webmanifest?b124">
+<link rel="manifest" href="manifest.webmanifest?b125">
 <meta name="theme-color" content="#2B2F6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LifeBookshelf">
-<link rel="apple-touch-icon" href="icon-180.png?b124">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b124">
+<link rel="apple-touch-icon" href="icon-180.png?b125">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?b125">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -181,6 +184,7 @@
 .skins button[aria-pressed="true"]{border-color:var(--accent)}
 .skins i{display:block;width:100%;height:34px;border-radius:7px;background:var(--sb);border-bottom:6px solid var(--sp);box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+html.ios{overflow:hidden}html.ios body{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:none;scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;min-height:100%;overflow-x:hidden;background-color:var(--bg);background-image:var(--bg-img,none);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 button,input,textarea,select{font:inherit;color:inherit}
@@ -730,7 +734,7 @@ body.mbs-drop .app{outline:3px dashed var(--accent);outline-offset:-8px;border-r
 <script>
 const COLORS=['#7A2E3A','#2F5D50','#3D5A80','#A07C2C','#5B3F6B','#2A7F84','#8A4B2A','#4B5563'];
 /* version shown to people (major.minor.patch) + build number bumped on every file release; the build also names the sw.js cache */
-const APP_VERSION='1.13.1',APP_BUILD_NO=124,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
+const APP_VERSION='1.13.2',APP_BUILD_NO=125,APP_DEV='Jessy Jun',APP_BUILD='웹앱';
 const STATUS={want:'읽고 싶은',reading:'읽는 중',done:'다 읽음',unread:'안 읽음'};
 const FORMAT={paper:'종이북',ebook:'이북',audio:'오디오북',app:'앱북'};
 const CAT_RENAME={Blinkist:'BookSummary'};
@@ -973,6 +977,8 @@ function sectionHTML(key,name,books,mixed,pre){if(pre)return trayHTML(key,name,b
   const uc=key==='미분류';
   return `<section class="cat${pre?' pre':''}${uc?' uncat':''}" data-cat="${encodeURIComponent(key)}"><div class="cath">${uc?'<svg class="ucic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>':''}<h2>${esc(uc?trText(name):name)}</h2><span>${books.length}권</span>${uc?'<em class="ucbadge">분류 정하기</em>':''}${pre?'<em>서재 입고 전</em>':''}</div>
     <div class="wood" data-pages="${pages.length}" style="--per:${per}">${pages.map(r=>`<div class="srow">${r.map(b=>tileHTML(b,mixed)).join('')}</div>`).join('')}</div>${dots}</section>`}
+/* the element that scrolls the page: <body> on iOS (see the head script), else the document */
+const pageScroller=()=>document.documentElement.classList.contains('ios')?document.body:(document.scrollingElement||document.documentElement);
 const isNew=b=>(!b.source||b.source==='GMDLibrary')&&b.createdAt&&(Date.now()-b.createdAt)<7*864e5;
 const freshAt=b=>Math.max(b.createdAt||0,b.startedAt?Date.parse(b.startedAt)||0:0);
 const sortIn=(a,b)=>(isNew(b)-isNew(a))||(isNew(a)&&isNew(b)?(b.createdAt-a.createdAt):0)||((b.rating||0)-(a.rating||0))||(({reading:0,done:1,unread:2,want:3}[a.status]??4)-({reading:0,done:1,unread:2,want:3}[b.status]??4))||(b.finishedAt||'').localeCompare(a.finishedAt||'')||freshAt(b)-freshAt(a);
@@ -1277,7 +1283,7 @@ const IC={menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',back:'<path d="M15 5l-7 7 7
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
   book:'<path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/>'};
 const svgI=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
-function goBack(){if(S.view!=='settings')return;S.view=S.prevView||'shelf';const y=S.prevScroll||0;S.prevView=null;S.prevScroll=0;renderMain();setTimeout(()=>window.scrollTo(0,y),0)}
+function goBack(){if(S.view!=='settings')return;S.view=S.prevView||'shelf';const y=S.prevScroll||0;S.prevView=null;S.prevScroll=0;renderMain();setTimeout(()=>{pageScroller().scrollTop=y},0)}
 /* iOS home-screen apps and Android turn an edge swipe / back button into history.back():
    on a settings page the first back opens the menu, a back while the menu is open leaves settings */
 window.addEventListener('popstate',()=>{if(S.view!=='settings')return;if(S.drawer){closeDrawer();goBack()}else{openDrawer();try{history.pushState({mbsView:'settings'},'')}catch(e){}}});
@@ -1760,7 +1766,7 @@ document.addEventListener('click',e=>{
         else toast(failed?`일부(${failed}권)는 지우지 못했어요. 다시 시도해 주세요`:'모든 데이터를 삭제했어요');
         applySkin();lastMain='';renderAll()});break}
     case 'drawer':S.drawer?closeDrawer():openDrawer();break;
-    case 'dnav':{const v=t.dataset.v,a=t.dataset.a;closeDrawer();if(v==='import'){openImport();break}if(S.openId)closeBook();if(S.view!=='settings'&&v==='settings'){S.prevView=S.view;S.prevScroll=window.scrollY;try{history.pushState({mbsView:'settings'},'')}catch(e){}}S.view=v;renderMain();
+    case 'dnav':{const v=t.dataset.v,a=t.dataset.a;closeDrawer();if(v==='import'){openImport();break}if(S.openId)closeBook();if(S.view!=='settings'&&v==='settings'){S.prevView=S.view;S.prevScroll=pageScroller().scrollTop;try{history.pushState({mbsView:'settings'},'')}catch(e){}}S.view=v;renderMain();
       const ry=v!=='settings'?(S.prevScroll||0):0;if(v!=='settings'){S.prevView=null;S.prevScroll=0;if(history.state&&history.state.mbsView){try{history.replaceState(null,'')}catch(e){}}}
       setTimeout(()=>{const el=a&&document.getElementById(a);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo(0,ry)},60);break}
     case 'srctoggle':{const k=t.dataset.k;{const off=new Set(S.settings.srcOff||[]);t.checked?off.delete(k):off.add(k);S.settings.srcOff=[...off]}putSettings();setTimeout(renderMain,0);break}
